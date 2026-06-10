@@ -1,0 +1,112 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">📦 用品库存</view>
+
+  <!-- 模式切换 -->
+  <view class="mode-toggle fade-in" style="animation-delay:0.05s;">
+    <view class="mode-toggle__item {{viewMode === 'stock' ? 'active' : ''}}" bindtap="switchMode" data-mode="stock">📋 库存</view>
+    <view class="mode-toggle__item {{viewMode === 'shop' ? 'active' : ''}}" bindtap="switchMode" data-mode="shop">🛒 购物清单</view>
+  </view>
+
+  <!-- 库存预警提示 -->
+  <view class="alert-bar fade-in" style="animation-delay:0.08s;" wx:if="{{lowCount > 0 && viewMode === 'stock'}}">
+    <text class="alert-bar__icon">⚠️</text>
+    <text class="alert-bar__text">{{lowCount}} 件物品需要补货</text>
+  </view>
+
+  <!-- 筛选 -->
+  <scroll-view scroll-x class="filter-scroll fade-in" style="animation-delay:0.1s;" enhanced show-scrollbar="{{false}}">
+    <view class="filter-bar">
+      <view class="filter-chip {{activeType === '' ? 'active' : ''}}" bindtap="onFilter" data-type="">全部</view>
+      <view class="filter-chip {{activeType === item ? 'active' : ''}}" wx:for="{{types}}" wx:key="*this" bindtap="onFilter" data-type="{{item}}">{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 库存视图 -->
+  <view wx:if="{{viewMode === 'stock'}}">
+    <view class="inventory-summary fade-in" style="animation-delay:0.12s;">
+      <text class="inventory-summary__text">共 {{filteredItems.length}} 种物品</text>
+      <text class="inventory-summary__low" wx:if="{{lowCount > 0}}">{{lowCount}} 需补货</text>
+    </view>
+    <view class="inventory-list">
+      <inventory-item wx:for="{{filteredItems}}" wx:key="id" item="{{item}}" />
+    </view>
+  </view>
+
+  <!-- 购物清单视图 -->
+  <view wx:if="{{viewMode === 'shop'}}">
+    <view class="shop-list fade-in" style="animation-delay:0.12s;">
+      <view class="shop-item" wx:for="{{shoppingList}}" wx:key="id">
+        <view class="shop-item__check {{item.checked ? 'checked' : ''}}" bindtap="toggleCheck" data-id="{{item.id}}">
+          <text wx:if="{{item.checked}}">✓</text>
+        </view>
+        <view class="shop-item__info">
+          <text class="shop-item__name {{item.checked ? 'done' : ''}}">{{item.name}}</text>
+          <text class="shop-item__brand">{{item.brand}} · 需补 {{item.suggestedQty}}{{item.unit}}</text>
+        </view>
+        <text class="shop-item__price">¥{{item.price}}</text>
+      </view>
+      <view class="shop-total" wx:if="{{shoppingList.length > 0}}">
+        <text>预估总计：</text>
+        <text class="shop-total__amount">¥{{shoppingTotal}}</text>
+      </view>
+      <empty-state wx:if="{{shoppingList.length === 0}}" icon="✅" title="库存充足" desc="暂不需要补货" />
+    </view>
+  </view>
+
+  <empty-state wx:if="{{viewMode === 'stock' && filteredItems.length === 0}}" icon="📦" title="暂无库存" />
+
+  <view style="height: 140rpx;"></view>
+
+  <!-- FAB -->
+  <view class="fab-btn" bindtap="showAdd" wx:if="{{viewMode === 'stock'}}">
+    <text>+</text>
+  </view>
+
+  <!-- 添加物品弹窗 -->
+  <view class="modal-mask" wx:if="{{showAddModal}}" bindtap="hideAdd">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">添加库存物品</text>
+        <view class="modal-close" bindtap="hideAdd"><text>✕</text></view>
+      </view>
+      <scroll-view scroll-y class="modal-body">
+        <view class="form-group">
+          <text class="form-label">物品名称 *</text>
+          <input class="form-input" value="{{form.name}}" placeholder="如：渴望猫粮" bindinput="onFormInput" data-field="name" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">分类</text>
+          <picker mode="selector" range="{{types}}" bindchange="onTypeChange">
+            <view class="form-picker">{{form.type}} ▾</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="form-label">品牌</text>
+          <input class="form-input" value="{{form.brand}}" placeholder="可选" bindinput="onFormInput" data-field="brand" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">当前库存 *</text>
+          <input class="form-input" type="digit" value="{{form.currentStock}}" placeholder="数量" bindinput="onFormInput" data-field="currentStock" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">单位</text>
+          <input class="form-input" value="{{form.unit}}" placeholder="kg / 包 / 个" bindinput="onFormInput" data-field="unit" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">补货阈值</text>
+          <input class="form-input" type="digit" value="{{form.restockThreshold}}" placeholder="低于此数量提醒补货" bindinput="onFormInput" data-field="restockThreshold" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">过期日期</text>
+          <picker mode="date" value="{{form.expiryDate}}" bindchange="onExpiryChange">
+            <view class="form-picker {{form.expiryDate ? '' : 'placeholder'}}">{{form.expiryDate || '选择过期日期'}} ▾</view>
+          </picker>
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="hideAdd">取消</view>
+        <view class="modal-btn confirm" bindtap="onSave">保存</view>
+      </view>
+    </view>
+  </view>
+</view>

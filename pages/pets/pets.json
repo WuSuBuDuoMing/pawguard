@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "宠物档案",
+  "usingComponents": {
+    "pet-card": "/components/pet-card/pet-card",
+    "empty-state": "/components/empty-state/empty-state"
+  }
+}

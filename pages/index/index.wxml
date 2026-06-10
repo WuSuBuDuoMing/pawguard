@@ -1,0 +1,231 @@
+<view class="page {{themeClass}}">
+  <!-- 问候区 -->
+  <view class="greeting fade-in">
+    <view class="greeting__left">
+      <view class="greeting__avatar">
+        <text>{{currentPet ? (currentPet.species === 'dog' ? '🐶' : currentPet.species === 'cat' ? '🐱' : currentPet.species === 'rabbit' ? '🐰' : currentPet.species === 'hamster' ? '🐹' : currentPet.species === 'bird' ? '🐦' : currentPet.species === 'reptile' ? '🦎' : '🐾') : '🐾'}}</text>
+      </view>
+      <view class="greeting__text">
+        <text class="greeting__title">{{greeting}}</text>
+        <text class="greeting__sub">{{currentPet ? currentPet.name + ' 的管家' : '铲屎官'}}</text>
+      </view>
+    </view>
+    <view class="greeting__right">
+      <view class="greeting__search" bindtap="goSearch">
+        <text>🔍</text>
+      </view>
+      <view class="greeting__theme" bindtap="toggleTheme">
+        <text>{{isDarkMode ? '☀️' : '🌙'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI 照护建议 -->
+  <view class="ai-banner fade-in" wx:if="{{aiSuggestion}}" style="animation-delay: 0.1s;">
+    <text class="ai-banner__icon">🤖</text>
+    <text class="ai-banner__text">{{aiSuggestion}}</text>
+  </view>
+
+  <!-- 宠物切换 -->
+  <scroll-view scroll-x class="pet-switcher fade-in" style="animation-delay: 0.15s;" wx:if="{{pets.length > 1}}" enhanced show-scrollbar="{{false}}">
+    <view class="pet-switcher__inner">
+      <view class="pet-switcher__item {{currentPetId === item.id ? 'active' : ''}}"
+            wx:for="{{pets}}" wx:key="id" bindtap="switchPet" data-id="{{item.id}}">
+        <view class="pet-switcher__avatar">
+          <text>{{item.species === 'dog' ? '🐶' : item.species === 'cat' ? '🐱' : item.species === 'rabbit' ? '🐰' : item.species === 'hamster' ? '🐹' : item.species === 'bird' ? '🐦' : item.species === 'reptile' ? '🦎' : '🐾'}}</text>
+        </view>
+        <text class="pet-switcher__name">{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 提醒区 -->
+  <view class="reminders fade-in" style="animation-delay: 0.2s;" wx:if="{{reminders.length > 0}}">
+    <scroll-view scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="reminders__list">
+        <view class="reminders__item {{item.type}}" wx:for="{{reminders}}" wx:key="id">
+          <text class="reminders__icon">{{item.icon}}</text>
+          <text class="reminders__text">{{item.text}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 每日摘要 -->
+  <view class="daily-summary fade-in" style="animation-delay:0.18s;" wx:if="{{dailySummary && dailySummary.highlights.length > 0}}">
+    <view class="daily-summary__title">📋 今日摘要</view>
+    <view class="daily-summary__items">
+      <text class="daily-summary__item" wx:for="{{dailySummary.highlights}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 今日照护进度 -->
+  <view class="section card fade-in" style="animation-delay: 0.25s;">
+    <view class="section__header">
+      <text class="section__title">📋 今日照护</text>
+      <text class="section__more" bindtap="goCare">查看全部 ›</text>
+    </view>
+    <view class="care-progress">
+      <view class="care-progress__visual">
+        <!-- 圆环进度 -->
+        <view class="care-ring">
+          <view class="care-ring__bg"></view>
+          <view class="care-ring__fill" style="--pct: {{careRate}};"></view>
+          <view class="care-ring__inner">
+            <text class="care-ring__percent">{{careRate}}%</text>
+            <text class="care-ring__label">{{careCompleted}}/{{careTotal}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="care-progress__list">
+        <view class="care-mini-task {{item.completed ? 'done' : ''}}" wx:for="{{todayCares}}" wx:key="id" wx:if="{{index < 5}}">
+          <text class="care-mini-task__icon">{{item.icon}}</text>
+          <text class="care-mini-task__name">{{item.name}}</text>
+          <view class="care-mini-task__check {{item.completed ? 'on' : ''}}" catchtap="onQuickComplete" data-task="{{item}}">
+            <text wx:if="{{item.completed}}">✓</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日喂食饮水 -->
+  <view class="section card fade-in" style="animation-delay: 0.28s;" wx:if="{{currentPetId}}">
+    <view class="section__header">
+      <text class="section__title">🍽️ 今日饮食</text>
+    </view>
+    <view class="diet-summary">
+      <view class="diet-item" bindtap="goPage" data-url="/pages/feeding/feeding">
+        <view class="diet-item__left">
+          <text class="diet-item__icon">🍽️</text>
+          <view class="diet-item__info">
+            <text class="diet-item__label">喂食</text>
+            <text class="diet-item__value">{{todayFeedingCount}} 次 · {{todayFeedingGrams}}g</text>
+          </view>
+        </view>
+        <view class="diet-item__status {{feedingDone ? 'done' : 'pending'}}">
+          <text>{{feedingDone ? '✓' : '○'}}</text>
+        </view>
+      </view>
+      <view class="diet-divider"></view>
+      <view class="diet-item" bindtap="goPage" data-url="/pages/water/water">
+        <view class="diet-item__left">
+          <text class="diet-item__icon">💧</text>
+          <view class="diet-item__info">
+            <text class="diet-item__label">饮水</text>
+            <text class="diet-item__value">{{todayWaterIntake}}ml</text>
+          </view>
+        </view>
+        <view class="diet-item__status {{waterDone ? 'done' : 'pending'}}">
+          <text>{{waterDone ? '✓' : '○'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="section fade-in" style="animation-delay: 0.3s;">
+    <view class="section__header">
+      <text class="section__title">⚡ 快捷功能</text>
+    </view>
+    <view class="shortcuts-grid">
+      <view class="shortcuts-row">
+        <view class="shortcuts__item" wx:for="{{shortcuts}}" wx:key="id" wx:if="{{index < 8}}" bindtap="goPage" data-url="{{item.url}}">
+          <view class="shortcuts__icon" style="background: {{item.bgColor}};">
+            <text>{{item.icon}}</text>
+          </view>
+          <text class="shortcuts__name">{{item.name}}</text>
+        </view>
+      </view>
+      <view class="shortcuts-row" wx:if="{{shortcuts.length > 8}}">
+        <view class="shortcuts__item" wx:for="{{shortcuts}}" wx:key="id" wx:if="{{index >= 8}}" bindtap="goPage" data-url="{{item.url}}">
+          <view class="shortcuts__icon" style="background: {{item.bgColor}};">
+            <text>{{item.icon}}</text>
+          </view>
+          <text class="shortcuts__name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 本月开销 -->
+  <view class="section card fade-in" style="animation-delay: 0.35s;">
+    <view class="section__header">
+      <text class="section__title">💰 本月开销</text>
+      <text class="section__more" bindtap="goExpense">详情 ›</text>
+    </view>
+    <view class="expense-overview">
+      <view class="expense-overview__amount-row">
+        <text class="expense-overview__symbol">¥</text>
+        <text class="expense-overview__amount">{{monthlyExpense}}</text>
+      </view>
+      <view class="expense-overview__cats" wx:if="{{topCategories.length > 0}}">
+        <view class="expense-cat" wx:for="{{topCategories}}" wx:key="category">
+          <view class="expense-cat__dot" style="background: {{index === 0 ? '#FF9F5A' : index === 1 ? '#7EC8E3' : index === 2 ? '#FFB5C2' : '#52C41A'}};"></view>
+          <text class="expense-cat__name">{{item.category}}</text>
+          <text class="expense-cat__pct">{{item.percentage}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 库存预警 -->
+  <view class="section card fade-in" style="animation-delay: 0.4s;" wx:if="{{lowStockItems.length > 0}}">
+    <view class="section__header">
+      <text class="section__title">📦 库存预警</text>
+      <view class="section__badge" wx:if="{{lowStockCount > 0}}">
+        <text>{{lowStockCount}}</text>
+      </view>
+      <text class="section__more" bindtap="goInventory">查看全部 ›</text>
+    </view>
+    <view class="low-stock-list">
+      <view class="low-stock-item" wx:for="{{lowStockItems}}" wx:key="id">
+        <text class="low-stock-item__icon">⚠️</text>
+        <text class="low-stock-item__name">{{item.name}}</text>
+        <view class="low-stock-item__right">
+          <text class="low-stock-item__stock">{{item.currentStock}}{{item.unit}}</text>
+          <text class="low-stock-item__need">需补货</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <loading-state wx:if="{{loading}}" text="加载宠物数据中..." />
+
+  <!-- 浮动快捷菜单 -->
+  <view class="fab-menu {{fabOpen ? 'open' : ''}}">
+    <view class="fab-menu__backdrop" wx:if="{{fabOpen}}" bindtap="toggleFab"></view>
+    <view class="fab-menu__items" wx:if="{{fabOpen}}">
+      <view class="fab-menu__item" bindtap="fabAction" data-url="/pages/care/care" style="animation-delay:0.05s;">
+        <text class="fab-menu__item-icon">📋</text>
+        <text class="fab-menu__item-label">照护打卡</text>
+      </view>
+      <view class="fab-menu__item" bindtap="fabAction" data-url="/pages/feeding/feeding" style="animation-delay:0.08s;">
+        <text class="fab-menu__item-icon">🍽️</text>
+        <text class="fab-menu__item-label">喂食记录</text>
+      </view>
+      <view class="fab-menu__item" bindtap="fabAction" data-url="/pages/water/water" style="animation-delay:0.11s;">
+        <text class="fab-menu__item-icon">💧</text>
+        <text class="fab-menu__item-label">饮水记录</text>
+      </view>
+      <view class="fab-menu__item" bindtap="fabAction" data-url="/pages/expense/expense" style="animation-delay:0.14s;">
+        <text class="fab-menu__item-icon">💰</text>
+        <text class="fab-menu__item-label">记一笔</text>
+      </view>
+      <view class="fab-menu__item" bindtap="fabAction" data-url="/pages/diary/diary" style="animation-delay:0.17s;">
+        <text class="fab-menu__item-icon">📝</text>
+        <text class="fab-menu__item-label">写日记</text>
+      </view>
+      <view class="fab-menu__item" bindtap="fabAction" data-url="/pages/health/health" style="animation-delay:0.2s;">
+        <text class="fab-menu__item-icon">💊</text>
+        <text class="fab-menu__item-label">健康记录</text>
+      </view>
+    </view>
+    <view class="fab-menu__trigger" bindtap="toggleFab">
+      <text class="fab-menu__trigger-icon">{{fabOpen ? '✕' : '⚡'}}</text>
+    </view>
+  </view>
+
+  <view style="height: 140rpx;"></view>
+</view>

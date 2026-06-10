@@ -1,0 +1,18 @@
+<view class="inv-item {{isLow ? 'low-stock' : ''}} {{isDarkMode ? 'dark' : ''}}" bindtap="onTap">
+  <view class="inv-item__left">
+    <view class="inv-item__type-icon">
+      <text>{{typeIcon}}</text>
+    </view>
+    <view class="inv-item__info">
+      <text class="inv-item__name">{{item.name}}</text>
+      <text class="inv-item__brand">{{item.brand}}</text>
+    </view>
+  </view>
+  <view class="inv-item__right">
+    <text class="inv-item__stock {{isLow ? 'warning' : ''}}">{{item.currentStock}}{{item.unit}}</text>
+    <view class="inv-item__bar">
+      <view class="inv-item__bar-fill" style="width: {{stockPercent}}%; background: {{isLow ? '#FF4D4F' : '#52C41A'}};"></view>
+    </view>
+    <text class="inv-item__label" wx:if="{{isLow}}">⚠️ 需补货</text>
+  </view>
+</view>

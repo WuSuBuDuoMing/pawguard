@@ -1,0 +1,95 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">💊 添加健康记录</view>
+
+  <!-- 宠物选择 -->
+  <view class="form-section fade-in" style="animation-delay:0.05s;">
+    <text class="form-section__label">选择宠物</text>
+    <picker mode="selector" range="{{petNames}}" value="{{petIndex}}" bindchange="onPetChange">
+      <view class="form-picker">{{petNames[petIndex]}} ▾</view>
+    </picker>
+  </view>
+
+  <!-- 记录类型选择 -->
+  <view class="type-selector fade-in" style="animation-delay:0.08s;">
+    <text class="form-section__label">记录类型</text>
+    <view class="type-grid">
+      <view class="type-item {{recordType === 'vaccine' ? 'active' : ''}}" bindtap="onTypeChange" data-type="vaccine">
+        <text class="type-item__icon">💉</text>
+        <text class="type-item__name">疫苗</text>
+      </view>
+      <view class="type-item {{recordType === 'deworming' ? 'active' : ''}}" bindtap="onTypeChange" data-type="deworming">
+        <text class="type-item__icon">🐛</text>
+        <text class="type-item__name">驱虫</text>
+      </view>
+      <view class="type-item {{recordType === 'visit' ? 'active' : ''}}" bindtap="onTypeChange" data-type="visit">
+        <text class="type-item__icon">🏥</text>
+        <text class="type-item__name">就诊</text>
+      </view>
+      <view class="type-item {{recordType === 'medication' ? 'active' : ''}}" bindtap="onTypeChange" data-type="medication">
+        <text class="type-item__icon">💊</text>
+        <text class="type-item__name">用药</text>
+      </view>
+      <view class="type-item {{recordType === 'abnormal' ? 'active' : ''}}" bindtap="onTypeChange" data-type="abnormal">
+        <text class="type-item__icon">🔍</text>
+        <text class="type-item__name">异常</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷模板 -->
+  <view class="form-section fade-in" style="animation-delay:0.1s;" wx:if="{{templates.length > 0}}">
+    <view class="form-section__header" bindtap="toggleTemplates">
+      <text class="form-section__label">快捷模板</text>
+      <text class="form-section__arrow">{{showTemplates ? '收起' : '展开'}} ▾</text>
+    </view>
+    <view class="template-grid" wx:if="{{showTemplates}}">
+      <view class="template-chip" wx:for="{{templates}}" wx:key="*this" bindtap="onTemplateTap" data-title="{{item}}">
+        <text>{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 表单 -->
+  <view class="form-body fade-in" style="animation-delay:0.12s;">
+    <view class="form-group">
+      <text class="form-label">标题 *</text>
+      <input class="form-input" value="{{form.title}}" placeholder="如：猫三联（年免）" bindinput="onFormInput" data-field="title" />
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">日期 *</text>
+      <picker mode="date" value="{{form.date}}" end="{{today}}" bindchange="onDateChange">
+        <view class="form-picker {{form.date ? '' : 'placeholder'}}">{{form.date || '选择日期'}} ▾</view>
+      </picker>
+    </view>
+
+    <view class="form-group" wx:if="{{typeConfig[recordType].fields.indexOf('clinic') >= 0}}">
+      <text class="form-label">医院/操作方式</text>
+      <input class="form-input" value="{{form.clinic}}" placeholder="如：瑞鹏宠物医院 / 自行操作" bindinput="onFormInput" data-field="clinic" />
+    </view>
+
+    <view class="form-group" wx:if="{{typeConfig[recordType].fields.indexOf('nextDate') >= 0}}">
+      <text class="form-label">下次日期</text>
+      <picker mode="date" value="{{form.nextDate}}" start="{{today}}" bindchange="onNextDateChange">
+        <view class="form-picker {{form.nextDate ? '' : 'placeholder'}}">{{form.nextDate || '选择下次日期'}} ▾</view>
+      </picker>
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">备注</text>
+      <textarea class="form-textarea" value="{{form.notes}}" placeholder="补充说明（可选）" bindinput="onFormInput" data-field="notes" />
+    </view>
+  </view>
+
+  <!-- 免责声明 -->
+  <view class="disclaimer fade-in" style="animation-delay:0.15s;">
+    <text>⚕️ 本模块仅用于记录和提醒，不提供医疗诊断。如有健康疑虑，请咨询专业兽医。</text>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="save-bar fade-in" style="animation-delay:0.18s;">
+    <view class="save-btn" bindtap="onSave">
+      <text>保存记录</text>
+    </view>
+  </view>
+</view>

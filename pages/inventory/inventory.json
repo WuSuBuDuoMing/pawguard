@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "用品库存",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "inventory-item": "/components/inventory-item/inventory-item",
+    "empty-state": "/components/empty-state/empty-state"
+  }
+}

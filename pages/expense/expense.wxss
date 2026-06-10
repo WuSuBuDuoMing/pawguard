@@ -1,0 +1,63 @@
+.page { padding: 24rpx 32rpx; }
+.fade-in { animation: fadeInUp 0.4s ease-out both; }
+@keyframes fadeInUp { from { opacity:0; transform:translateY(30rpx); } to { opacity:1; transform:translateY(0); } }
+
+.page-title { font-size: 40rpx; font-weight: 700; color: var(--text-primary); margin-bottom: 28rpx; }
+
+/* 概览卡片 */
+.overview-card {
+  background: linear-gradient(135deg, #FF9F5A, #FFB87C, #FFC6A0);
+  border-radius: 32rpx; padding: 40rpx; margin-bottom: 32rpx; color: #FFF;
+  box-shadow: 0 12rpx 40rpx rgba(255,159,90,0.3);
+}
+.overview-card__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
+.overview-card__label { font-size: 28rpx; opacity: 0.9; }
+.overview-card__nav { display: flex; gap: 16rpx; }
+.overview-card__nav-btn {
+  width: 48rpx; height: 48rpx; border-radius: 50%;
+  background: rgba(255,255,255,0.2); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 32rpx; font-weight: 700;
+}
+.overview-card__amount { font-size: 72rpx; font-weight: 700; display: block; margin-bottom: 24rpx; letter-spacing: -2rpx; }
+.overview-card__row { display: flex; justify-content: space-around; }
+.overview-card__metric { text-align: center; }
+.overview-card__metric-val { font-size: 28rpx; font-weight: 600; display: block; }
+.overview-card__metric-label { font-size: 22rpx; opacity: 0.8; }
+
+/* 区块 */
+.section { margin-bottom: 28rpx; }
+.card { background: var(--card-bg); border-radius: 28rpx; padding: 28rpx; box-shadow: var(--shadow); }
+.section__header { margin-bottom: 20rpx; display: flex; justify-content: space-between; align-items: center; }
+.section__title { font-size: 30rpx; font-weight: 600; color: var(--text-primary); }
+
+/* 柱状图 */
+.bar-chart { }
+.bar-chart__row { display: flex; align-items: center; margin-bottom: 16rpx; gap: 12rpx; }
+.bar-chart__label { font-size: 24rpx; color: var(--text-primary); min-width: 80rpx; text-align: right; }
+.bar-chart__bar-wrap { flex: 1; height: 24rpx; background: rgba(255,159,90,0.06); border-radius: 12rpx; overflow: hidden; }
+.bar-chart__bar { height: 100%; border-radius: 12rpx; transition: width 0.8s ease; min-width: 8rpx; }
+.bar-chart__right { display: flex; align-items: baseline; gap: 8rpx; min-width: 140rpx; justify-content: flex-end; }
+.bar-chart__amount { font-size: 24rpx; font-weight: 600; color: var(--text-primary); }
+.bar-chart__pct { font-size: 20rpx; color: var(--text-secondary); }
+.bar-chart__empty { text-align: center; padding: 40rpx; color: var(--text-secondary); font-size: 26rpx; }
+
+/* 多宠分摊 */
+.pet-breakdown { }
+.pet-breakdown__item { display: flex; align-items: center; margin-bottom: 16rpx; gap: 12rpx; }
+.pet-breakdown__icon { font-size: 28rpx; }
+.pet-breakdown__name { font-size: 24rpx; color: var(--text-primary); min-width: 80rpx; }
+.pet-breakdown__bar-wrap { flex: 1; height: 20rpx; background: rgba(126,200,227,0.12); border-radius: 10rpx; overflow: hidden; }
+.pet-breakdown__bar { height: 100%; background: linear-gradient(90deg, #7EC8E3, #a8dcf0); border-radius: 10rpx; transition: width 0.8s ease; }
+.pet-breakdown__amount { font-size: 24rpx; font-weight: 600; color: var(--text-primary); min-width: 100rpx; text-align: right; }
+
+/* 预算卡片 */
+.budget-card { background: var(--card-bg); border-radius: 24rpx; padding: 28rpx; margin-bottom: 24rpx; box-shadow: var(--shadow); }
+.budget-card__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
+.budget-card__title { font-size: 28rpx; font-weight: 600; color: var(--text-primary); }
+.budget-card__amount { font-size: 28rpx; font-weight: 600; color: #FF9F5A; }
+.budget-card__bar-wrap { height: 16rpx; background: rgba(0,0,0,0.04); border-radius: 8rpx; overflow: hidden; margin-bottom: 12rpx; }
+.budget-card__bar { height: 100%; border-radius: 8rpx; transition: width 0.8s ease; }
+.budget-card__info { display: flex; justify-content: space-between; font-size: 24rpx; color: var(--text-secondary); margin-bottom: 8rpx; }
+.budget-card__tip { font-size: 22rpx; color: var(--text-secondary); padding: 10rpx 16rpx; background: rgba(82,196,26,0.06); border-radius: 10rpx; }
+.budget-card__tip.warning { background: rgba(255,77,79,0.06); color: #FF4D4F; }

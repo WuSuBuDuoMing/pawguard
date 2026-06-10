@@ -1,0 +1,120 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">🐾 行为追踪</view>
+  <picker mode="selector" range="{{petNames}}" value="{{petIndex}}" bindchange="onPetChange">
+    <view class="pet-picker fade-in" style="animation-delay:0.05s;">
+      <text>{{currentPetSpecies === 'dog' ? '🐶' : currentPetSpecies === 'cat' ? '🐱' : currentPetSpecies === 'rabbit' ? '🐰' : currentPetSpecies === 'hamster' ? '🐹' : currentPetSpecies === 'bird' ? '🐦' : currentPetSpecies === 'reptile' ? '🦎' : '🐾'}}</text>
+      <text>{{currentPetName}} ▾</text>
+    </view>
+  </picker>
+
+  <!-- 健康评分 -->
+  <view class="score-card fade-in" style="animation-delay:0.08s;">
+    <view class="score-card__left">
+      <text class="score-card__label">行为健康度</text>
+      <text class="score-card__score" style="color: {{stats.healthScore >= 80 ? '#52C41A' : stats.healthScore >= 60 ? '#FAAD14' : '#FF4D4F'}};">{{stats.healthScore}}</text>
+      <text class="score-card__unit">/100</text>
+    </view>
+    <view class="score-card__right">
+      <view class="score-card__stat">
+        <text class="score-card__stat-num" style="color:#52C41A;">{{stats.normal}}</text>
+        <text class="score-card__stat-label">正常</text>
+      </view>
+      <view class="score-card__stat">
+        <text class="score-card__stat-num" style="color:#FF4D4F;">{{stats.abnormal}}</text>
+        <text class="score-card__stat-label">异常</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 异常预警 -->
+  <view class="alert-section fade-in" style="animation-delay:0.1s;" wx:if="{{abnormals.length > 0}}">
+    <view class="alert-section__title">⚠️ 异常行为预警</view>
+    <view class="alert-card" wx:for="{{abnormals}}" wx:key="id">
+      <text class="alert-card__icon">{{behaviorTypes[item.type] || '🐾'}}</text>
+      <view class="alert-card__info">
+        <text class="alert-card__note">{{item.note}}</text>
+        <text class="alert-card__date">{{item.date}} {{item.time}}</text>
+      </view>
+    </view>
+    <view class="alert-tip">
+      <text>💡 如异常行为持续 3 天以上，建议联系兽医</text>
+    </view>
+  </view>
+
+  <!-- 快速记录 -->
+  <view class="section fade-in" style="animation-delay:0.12s;">
+    <view class="section__header">
+      <text class="section__title">📝 快速记录</text>
+    </view>
+    <view class="quick-grid">
+      <view class="quick-item" wx:for="{{behaviorTypeList}}" wx:key="id" bindtap="onQuickRecord" data-type="{{item}}">
+        <text class="quick-item__icon">{{item.icon}}</text>
+        <text class="quick-item__name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 行为记录 -->
+  <view class="section fade-in" style="animation-delay:0.15s;">
+    <view class="section__header">
+      <text class="section__title">📋 最近记录</text>
+    </view>
+    <view class="record-list">
+      <view class="record-item {{item.status}}" wx:for="{{records}}" wx:key="id">
+        <view class="record-item__left">
+          <text class="record-item__icon">{{behaviorTypes[item.type] || '🐾'}}</text>
+          <view class="record-item__info">
+            <text class="record-item__note">{{item.note}}</text>
+            <text class="record-item__meta">{{item.date}} {{item.time}}</text>
+          </view>
+        </view>
+        <view class="record-item__badge {{item.status}}">
+          <text>{{item.status === 'normal' ? '✓' : '!'}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty-hint" wx:if="{{records.length === 0}}">暂无行为记录</view>
+  </view>
+
+  <view style="height: 140rpx;"></view>
+
+  <!-- FAB - 报告异常 -->
+  <view class="fab-btn" bindtap="showAbnormal">
+    <text>⚠️</text>
+  </view>
+
+  <!-- 异常报告弹窗 -->
+  <view class="modal-mask" wx:if="{{showAbnormalModal}}" bindtap="hideAbnormal">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">🔍 报告异常行为</text>
+        <view class="modal-close" bindtap="hideAbnormal"><text>✕</text></view>
+      </view>
+      <scroll-view scroll-y class="modal-body">
+        <view class="form-group">
+          <text class="form-label">行为类型</text>
+          <picker mode="selector" range="{{['eating','drinking','sleeping','playing','grooming','toilet','social','movement']}}" bindchange="onAbnormalTypeChange">
+            <view class="form-picker">{{behaviorTypes[abnormalForm.type] || '🐾'}} {{abnormalForm.type}} ▾</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="form-label">严重程度</text>
+          <picker mode="selector" range="{{severityOptions}}" range-key="name" bindchange="onSeverityChange">
+            <view class="form-picker">{{severityOptions[0].name}} ▾</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="form-label">描述 *</text>
+          <textarea class="form-textarea" value="{{abnormalForm.note}}" placeholder="请描述观察到的异常行为..." bindinput="onAbnormalInput" data-field="note" />
+        </view>
+        <view class="abnormal-tip">
+          <text>💡 如异常行为持续 3 天以上或症状严重，建议尽快联系兽医</text>
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="hideAbnormal">取消</view>
+        <view class="modal-btn confirm" bindtap="onSaveAbnormal">提交报告</view>
+      </view>
+    </view>
+  </view>
+</view>

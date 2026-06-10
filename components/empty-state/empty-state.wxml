@@ -1,0 +1,6 @@
+<view class="empty {{isDarkMode ? 'dark' : ''}}">
+  <text class="empty__icon">{{icon}}</text>
+  <text class="empty__title">{{title}}</text>
+  <text class="empty__desc">{{desc}}</text>
+  <button class="empty__btn btn-primary" wx:if="{{btnText}}" bindtap="onBtnTap">{{btnText}}</button>
+</view>

@@ -1,0 +1,1 @@
+{ "navigationBarTitleText": "训练打卡", "usingComponents": { "training-card": "/components/training-card/training-card", "progress-ring": "/components/progress-ring/progress-ring", "empty-state": "/components/empty-state/empty-state" } }

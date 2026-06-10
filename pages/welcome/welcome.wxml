@@ -1,0 +1,59 @@
+<view class="welcome">
+  <!-- 背景装饰 -->
+  <view class="welcome__bg">
+    <view class="welcome__circle c1"></view>
+    <view class="welcome__circle c2"></view>
+    <view class="welcome__circle c3"></view>
+  </view>
+
+  <!-- 内容 -->
+  <view class="welcome__content {{step > 0 ? 'fade-in' : ''}}">
+    <!-- Logo -->
+    <view class="welcome__logo" wx:if="{{step === 0}}">
+      <text class="welcome__emoji">🐾</text>
+      <text class="welcome__title">AI 宠物管家</text>
+      <text class="welcome__subtitle">让养宠更轻松、更温暖</text>
+    </view>
+
+    <!-- Step 1 -->
+    <view class="welcome__step" wx:if="{{step === 1}}">
+      <text class="welcome__step-emoji">🐱🐶🐰🐹</text>
+      <text class="welcome__step-title">多宠多物种</text>
+      <text class="welcome__step-desc">支持猫、狗、兔子、仓鼠、鸟类、爬宠\n每只都有独立档案和专属护理建议</text>
+    </view>
+
+    <!-- Step 2 -->
+    <view class="welcome__step" wx:if="{{step === 2}}">
+      <text class="welcome__step-emoji">📋🍽️💧</text>
+      <text class="welcome__step-title">照护 & 饮食</text>
+      <text class="welcome__step-desc">每日照护打卡、喂食记录、饮水管理\n让宠物的每一餐都有迹可循</text>
+    </view>
+
+    <!-- Step 3 -->
+    <view class="welcome__step" wx:if="{{step === 3}}">
+      <text class="welcome__step-emoji">💊💉🐛</text>
+      <text class="welcome__step-title">健康守护</text>
+      <text class="welcome__step-desc">疫苗驱虫提醒、体重趋势、异常预警\n全方位守护宠物健康</text>
+    </view>
+
+    <!-- Step 4 -->
+    <view class="welcome__step" wx:if="{{step === 4}}">
+      <text class="welcome__step-emoji">🤖✨📊</text>
+      <text class="welcome__step-title">AI 智能助手</text>
+      <text class="welcome__step-desc">AI 症状分析、喂食建议、日记生成\n数据统计让养宠更有洞察</text>
+    </view>
+  </view>
+
+  <!-- 进度点 -->
+  <view class="welcome__dots">
+    <view class="welcome__dot {{step === i ? 'active' : ''}}" wx:for="{{[0,1,2,3,4]}}" wx:key="*this" wx:for-index="i"></view>
+  </view>
+
+  <!-- 按钮 -->
+  <view class="welcome__actions">
+    <button class="welcome__btn" bindtap="onNext">
+      {{step < 4 ? '继续' : '开始使用'}}
+    </button>
+    <text class="welcome__skip" bindtap="onSkip" wx:if="{{step < 4}}">跳过</text>
+  </view>
+</view>

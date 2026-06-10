@@ -1,0 +1,53 @@
+.care-task {
+  display: flex; align-items: center; padding: 24rpx;
+  background: var(--card-bg, #FFF); border-radius: 24rpx;
+  margin-bottom: 16rpx; box-shadow: var(--shadow);
+  transition: all 0.3s ease; border: 2rpx solid transparent;
+}
+.care-task.completed { opacity: 0.65; border-color: rgba(82,196,26,0.15); }
+.care-task:active { transform: scale(0.98); }
+
+.care-task__icon {
+  width: 80rpx; height: 80rpx; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background 0.3s;
+}
+.care-task__emoji { font-size: 32rpx; }
+
+.care-task__info { flex: 1; margin-left: 20rpx; }
+.care-task__name { font-size: 28rpx; font-weight: 500; color: var(--text-primary, #333); display: block; }
+.care-task__meta { display: flex; align-items: center; gap: 8rpx; margin-top: 6rpx; }
+.care-task__time { font-size: 22rpx; color: var(--text-secondary, #888); }
+.care-task__notes { font-size: 22rpx; color: var(--text-secondary, #888); }
+
+.care-task__action { display: flex; flex-direction: column; align-items: center; gap: 6rpx; margin-left: 16rpx; }
+.care-task__check {
+  width: 56rpx; height: 56rpx; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.care-task__check-inner {
+  width: 44rpx; height: 44rpx; border-radius: 50%;
+  border: 3rpx solid #DDD; display: flex;
+  align-items: center; justify-content: center;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative; z-index: 2; background: var(--card-bg, #FFF);
+}
+.care-task__check.checked .care-task__check-inner {
+  background: #52C41A; border-color: #52C41A;
+  transform: scale(1);
+}
+.care-task__check-icon { font-size: 24rpx; color: #FFF; font-weight: 700; }
+.care-task__check-ring {
+  position: absolute; inset: -4rpx; border-radius: 50%;
+  border: 2rpx solid transparent;
+  transition: all 0.3s ease;
+}
+.care-task__check-ring.done {
+  border-color: rgba(82,196,26,0.3);
+  animation: checkPulse 0.6s ease-out;
+}
+@keyframes checkPulse {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+.care-task__status-text { font-size: 20rpx; color: var(--text-secondary, #888); }

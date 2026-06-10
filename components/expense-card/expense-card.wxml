@@ -1,0 +1,12 @@
+<view class="expense-card {{isDarkMode ? 'dark' : ''}}" bindtap="onTap">
+  <view class="expense-card__left">
+    <view class="expense-card__icon">
+      <text>{{categoryIcon}}</text>
+    </view>
+    <view class="expense-card__info">
+      <text class="expense-card__title">{{record.title}}</text>
+      <text class="expense-card__meta">{{record.category}} · {{record.date}}</text>
+    </view>
+  </view>
+  <text class="expense-card__amount">¥{{record.amount}}</text>
+</view>

@@ -1,0 +1,122 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">📊 数据统计</view>
+
+  <!-- 时间范围 -->
+  <view class="range-picker fade-in" style="animation-delay:0.05s;">
+    <view class="range-item {{activeRange === 'week' ? 'active' : ''}}" bindtap="setRange" data-range="week">本周</view>
+    <view class="range-item {{activeRange === 'month' ? 'active' : ''}}" bindtap="setRange" data-range="month">本月</view>
+    <view class="range-item {{activeRange === 'year' ? 'active' : ''}}" bindtap="setRange" data-range="year">今年</view>
+  </view>
+
+  <!-- 总览卡片 -->
+  <view class="overview-grid fade-in" style="animation-delay:0.08s;">
+    <view class="ov-card">
+      <text class="ov-card__icon">📋</text>
+      <text class="ov-card__num">{{overview.careCount}}</text>
+      <text class="ov-card__label">照护打卡</text>
+    </view>
+    <view class="ov-card">
+      <text class="ov-card__icon">🎯</text>
+      <text class="ov-card__num">{{overview.trainingCount}}</text>
+      <text class="ov-card__label">训练次数</text>
+    </view>
+    <view class="ov-card">
+      <text class="ov-card__icon">📝</text>
+      <text class="ov-card__num">{{overview.diaryCount}}</text>
+      <text class="ov-card__label">日记</text>
+    </view>
+    <view class="ov-card">
+      <text class="ov-card__icon">💰</text>
+      <text class="ov-card__num">¥{{overview.expenseTotal}}</text>
+      <text class="ov-card__label">开销</text>
+    </view>
+  </view>
+
+  <!-- 照护完成率趋势 -->
+  <view class="section card fade-in" style="animation-delay:0.12s;">
+    <view class="section__header">
+      <text class="section__title">📋 照护完成率趋势</text>
+      <text class="section__avg">平均 {{careAvgRate}}%</text>
+    </view>
+    <mini-chart data="{{careTrend}}" color="#52C41A" width="{{chartWidth}}" height="140" showLabels="{{false}}" />
+  </view>
+
+  <!-- 喂食趋势 -->
+  <view class="section card fade-in" style="animation-delay:0.13s;">
+    <view class="section__header">
+      <text class="section__title">🍽️ 喂食量趋势</text>
+      <text class="section__avg">日均 {{avgDailyGrams}}g</text>
+    </view>
+    <mini-chart data="{{feedingTrend}}" color="#FF9F5A" width="{{chartWidth}}" height="140" showLabels="{{false}}" />
+  </view>
+
+  <!-- 饮水趋势 -->
+  <view class="section card fade-in" style="animation-delay:0.14s;">
+    <view class="section__header">
+      <text class="section__title">💧 饮水量趋势</text>
+      <text class="section__avg">日均 {{avgDailyWater}}ml</text>
+    </view>
+    <mini-chart data="{{waterTrend}}" color="#7EC8E3" width="{{chartWidth}}" height="140" showLabels="{{false}}" />
+  </view>
+
+  <!-- 月度开销趋势 -->
+  <view class="section card fade-in" style="animation-delay:0.15s;">
+    <view class="section__header">
+      <text class="section__title">💰 月度开销趋势</text>
+    </view>
+    <mini-chart data="{{expenseTrend}}" title="" color="#FF9F5A" width="{{chartWidth}}" height="150" />
+  </view>
+
+  <!-- 各宠物开销占比 -->
+  <view class="section card fade-in" style="animation-delay:0.18s;">
+    <view class="section__header"><text class="section__title">🐾 各宠物开销</text></view>
+    <view class="pet-expense-list">
+      <view class="pet-expense-row" wx:for="{{petExpenses}}" wx:key="petId">
+        <view class="pet-expense-row__left">
+          <text class="pet-expense-row__icon">{{item.species === 'dog' ? '🐶' : item.species === 'cat' ? '🐱' : item.species === 'rabbit' ? '🐰' : item.species === 'hamster' ? '🐹' : item.species === 'bird' ? '🐦' : item.species === 'reptile' ? '🦎' : '🐾'}}</text>
+          <text class="pet-expense-row__name">{{item.name}}</text>
+        </view>
+        <view class="pet-expense-row__bar-wrap">
+          <view class="pet-expense-row__bar" style="width:{{item.pct}}%;background:{{item.color}};"></view>
+        </view>
+        <text class="pet-expense-row__amount">¥{{item.amount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 健康概览 -->
+  <view class="section card fade-in" style="animation-delay:0.2s;">
+    <view class="section__header"><text class="section__title">💊 健康概览</text></view>
+    <view class="health-overview">
+      <view class="health-ov-item" wx:for="{{healthOverview}}" wx:key="type">
+        <text class="health-ov-item__icon">{{item.icon}}</text>
+        <text class="health-ov-item__count">{{item.count}}</text>
+        <text class="health-ov-item__label">{{item.label}}</text>
+      </view>
+    </view>
+    <view class="health-alert" wx:if="{{healthAlerts > 0}}">
+      <text>⚠️ {{healthAlerts}} 条健康提醒需要关注</text>
+    </view>
+  </view>
+
+  <!-- 库存健康 -->
+  <view class="section card fade-in" style="animation-delay:0.22s;">
+    <view class="section__header"><text class="section__title">📦 库存健康</text></view>
+    <view class="inv-health">
+      <view class="inv-health__ring">
+        <progress-ring percent="{{invHealthPct}}" size="120" color="{{invHealthPct >= 70 ? '#52C41A' : invHealthPct >= 40 ? '#FAAD14' : '#FF4D4F'}}" label="健康度" />
+      </view>
+      <view class="inv-health__info">
+        <view class="inv-health__row">
+          <text>总品类</text><text class="inv-health__val">{{invTotal}} 种</text>
+        </view>
+        <view class="inv-health__row">
+          <text>库存充足</text><text class="inv-health__val" style="color:#52C41A;">{{invHealthy}} 种</text>
+        </view>
+        <view class="inv-health__row">
+          <text>需要补货</text><text class="inv-health__val" style="color:#FF4D4F;">{{invLow}} 种</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

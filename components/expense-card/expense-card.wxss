@@ -1,0 +1,15 @@
+.expense-card {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--card-bg, #FFF); border-radius: 20rpx;
+  padding: 24rpx; margin-bottom: 12rpx; box-shadow: var(--shadow);
+}
+.expense-card__left { display: flex; align-items: center; flex: 1; }
+.expense-card__icon {
+  width: 60rpx; height: 60rpx; border-radius: 16rpx;
+  background: rgba(255,159,90,0.1); display: flex;
+  align-items: center; justify-content: center; font-size: 26rpx;
+}
+.expense-card__info { margin-left: 16rpx; }
+.expense-card__title { font-size: 26rpx; font-weight: 500; color: var(--text-primary, #333); display: block; }
+.expense-card__meta { font-size: 20rpx; color: var(--text-secondary, #888); }
+.expense-card__amount { font-size: 30rpx; font-weight: 600; color: #FF9F5A; }

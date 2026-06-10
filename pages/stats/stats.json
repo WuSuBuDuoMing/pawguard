@@ -1,0 +1,1 @@
+{ "navigationBarTitleText": "数据统计", "usingComponents": { "mini-chart": "/components/mini-chart/mini-chart", "progress-ring": "/components/progress-ring/progress-ring" } }

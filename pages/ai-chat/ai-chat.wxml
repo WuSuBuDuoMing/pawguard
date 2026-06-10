@@ -1,0 +1,132 @@
+<view class="page {{themeClass}}">
+  <!-- 顶部栏 -->
+  <view class="chat-header">
+    <view class="chat-header__left">
+      <view class="chat-header__avatar">
+        <text>🤖</text>
+      </view>
+      <view class="chat-header__info">
+        <text class="chat-header__name">智能宠物助手</text>
+        <text class="chat-header__status">{{isTyping ? '正在思考...' : '在线'}}</text>
+      </view>
+    </view>
+    <view class="chat-header__right">
+      <!-- 宠物切换 -->
+      <picker wx:if="{{pets.length > 1}}" mode="selector" range="{{pets}}" range-key="name" bindchange="onPetChange">
+        <view class="chat-header__pet">
+          <text>{{currentPetName || '选择宠物'}}</text>
+          <text class="chat-header__arrow">▾</text>
+        </view>
+      </picker>
+      <view class="chat-header__action" bindtap="onClearChat">
+        <text>🗑️</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 免责声明 -->
+  <view class="disclaimer-bar" wx:if="{{showDisclaimer}}">
+    <text class="disclaimer-bar__icon">⚕️</text>
+    <text class="disclaimer-bar__text">AI 建议仅供参考，不替代专业兽医诊断。如有严重症状请立即就医。</text>
+    <view class="disclaimer-bar__close" bindtap="onCloseDisclaimer">
+      <text>✕</text>
+    </view>
+  </view>
+
+  <!-- 每日提示 -->
+  <view class="daily-tip" wx:if="{{dailyTip}}">
+    <text class="daily-tip__icon">💡</text>
+    <text class="daily-tip__text">{{dailyTip}}</text>
+  </view>
+
+  <!-- 消息列表 -->
+  <scroll-view
+    class="chat-messages"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+    scroll-into-view="{{scrollToId}}"
+    scroll-with-animation
+  >
+    <view class="messages-inner">
+      <block wx:for="{{messages}}" wx:key="id">
+        <!-- 时间戳 -->
+        <view class="msg-time" wx:if="{{index === 0 || item.time !== messages[index-1].time}}">
+          <text>{{item.time}}</text>
+        </view>
+
+        <!-- 用户消息 -->
+        <view class="msg-row user" wx:if="{{item.role === 'user'}}">
+          <view class="msg-bubble user-bubble" id="{{item.id}}" bindlongtap="onLongPressMessage" data-content="{{item.content}}">
+            <text class="msg-text" user-select>{{item.content}}</text>
+          </view>
+          <view class="msg-avatar user-avatar">
+            <text>👤</text>
+          </view>
+        </view>
+
+        <!-- AI 消息 -->
+        <view class="msg-row assistant" wx:if="{{item.role === 'assistant'}}">
+          <view class="msg-avatar assistant-avatar">
+            <text>🤖</text>
+          </view>
+          <view class="msg-bubble {{item.isUrgent ? 'urgent-bubble' : 'assistant-bubble'}}" id="{{item.id}}" bindlongtap="onLongPressMessage" data-content="{{item.content}}">
+            <view class="msg-urgent-badge" wx:if="{{item.isUrgent}}">
+              <text>🚨 紧急提醒</text>
+            </view>
+            <text class="msg-text" user-select>{{item.content}}</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 打字指示器 -->
+      <view class="msg-row assistant" wx:if="{{isTyping}}" id="typing_indicator">
+        <view class="msg-avatar assistant-avatar">
+          <text>🤖</text>
+        </view>
+        <view class="msg-bubble assistant-bubble typing-bubble">
+          <view class="typing-dots">
+            <view class="typing-dot"></view>
+            <view class="typing-dot"></view>
+            <view class="typing-dot"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部间距 -->
+    <view style="height: 20rpx;"></view>
+  </scroll-view>
+
+  <!-- 快捷问题 -->
+  <scroll-view class="quick-questions" scroll-x enhanced show-scrollbar="{{false}}" wx:if="{{messages.length <= 2}}">
+    <view class="quick-questions__inner">
+      <view class="quick-q" wx:for="{{quickQuestions}}" wx:key="id" bindtap="onQuickQuestion" data-text="{{item.text}}">
+        <text class="quick-q__icon">{{item.icon}}</text>
+        <text class="quick-q__text">{{item.text}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 输入区 -->
+  <view class="chat-input-bar">
+    <view class="input-wrap {{inputFocused ? 'focused' : ''}}">
+      <input
+        class="chat-input"
+        value="{{inputValue}}"
+        placeholder="输入宠物相关问题..."
+        placeholder-class="input-placeholder"
+        bindinput="onInputChange"
+        bindfocus="onInputFocus"
+        bindblur="onInputBlur"
+        bindconfirm="onConfirm"
+        confirm-type="send"
+        adjust-position="{{true}}"
+        cursor-spacing="20"
+      />
+    </view>
+    <view class="send-btn {{inputValue ? 'active' : ''}}" bindtap="onSend">
+      <text>发送</text>
+    </view>
+  </view>
+</view>

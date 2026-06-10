@@ -1,0 +1,12 @@
+<view class="album-grid">
+  <view class="album-grid__item" wx:for="{{photos}}" wx:key="id" bindtap="onPhotoTap" data-index="{{index}}">
+    <image src="{{item.url}}" mode="aspectFill" class="album-grid__img" lazy-load />
+    <view class="album-grid__overlay" wx:if="{{showTitle}}">
+      <text class="album-grid__title">{{item.title}}</text>
+    </view>
+  </view>
+  <view class="album-grid__empty" wx:if="{{!photos || photos.length === 0}}">
+    <text class="empty-icon">📷</text>
+    <text class="empty-desc">还没有照片哦~</text>
+  </view>
+</view>

@@ -1,0 +1,70 @@
+<view class="page {{themeClass}}">
+  <view class="page-title">🐾 我的宠物</view>
+  <view class="pet-list">
+    <pet-card wx:for="{{pets}}" wx:key="id" pet="{{item}}" bindtap="onPetTap" data-id="{{item.id}}" />
+  </view>
+  <empty-state wx:if="{{pets.length === 0}}" icon="🐾" title="还没有宠物" desc="添加你的第一只宠物吧" btnText="添加宠物" bindaction="onAdd" />
+  <view class="fab" bindtap="onAdd"><text class="fab-icon">+</text></view>
+
+  <!-- 添加/编辑弹窗 -->
+  <view class="modal-mask" wx:if="{{showModal}}" bindtap="hideModal">
+    <view class="modal {{isDarkMode ? 'dark' : ''}}" catchtap>
+      <text class="modal__title">{{editingPet ? '编辑宠物' : '添加宠物'}}</text>
+      <view class="modal__form">
+        <view class="form-item">
+          <text class="form-label">名字</text>
+          <input class="form-input" value="{{form.name}}" bindinput="onInput" data-field="name" placeholder="宠物名字" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">种类</text>
+          <view class="form-radio-group">
+            <view class="form-radio {{form.species === 'cat' ? 'active' : ''}}" bindtap="onSpecies" data-v="cat">🐱 猫</view>
+            <view class="form-radio {{form.species === 'dog' ? 'active' : ''}}" bindtap="onSpecies" data-v="dog">🐶 狗</view>
+            <view class="form-radio {{form.species === 'rabbit' ? 'active' : ''}}" bindtap="onSpecies" data-v="rabbit">🐰 兔</view>
+            <view class="form-radio {{form.species === 'hamster' ? 'active' : ''}}" bindtap="onSpecies" data-v="hamster">🐹 鼠</view>
+            <view class="form-radio {{form.species === 'bird' ? 'active' : ''}}" bindtap="onSpecies" data-v="bird">🐦 鸟</view>
+            <view class="form-radio {{form.species === 'reptile' ? 'active' : ''}}" bindtap="onSpecies" data-v="reptile">🦎 爬宠</view>
+            <view class="form-radio {{form.species === 'other' ? 'active' : ''}}" bindtap="onSpecies" data-v="other">🐾 其他</view>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">品种</text>
+          <picker mode="selector" range="{{breedList}}" bindchange="onBreedChange">
+            <view class="form-input picker">{{form.breed || '选择品种'}}</view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <text class="form-label">性别</text>
+          <view class="form-radio-group">
+            <view class="form-radio {{form.gender === 'male' ? 'active' : ''}}" bindtap="onGender" data-v="male">♂ 公</view>
+            <view class="form-radio {{form.gender === 'female' ? 'active' : ''}}" bindtap="onGender" data-v="female">♀ 母</view>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">生日</text>
+          <picker mode="date" value="{{form.birthday}}" bindchange="onBirthday">
+            <view class="form-input picker">{{form.birthday || '选择生日'}}</view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <text class="form-label">体重(kg)</text>
+          <input class="form-input" type="digit" value="{{form.weight}}" bindinput="onInput" data-field="weight" placeholder="体重" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">性格标签</text>
+          <view class="personality-picker">
+            <view class="personality-tag {{form.personality && form.personality.includes(item) ? 'selected' : ''}}" wx:for="{{personalityOptions}}" wx:key="*this" bindtap="togglePersonality" data-tag="{{item}}">{{item}}</view>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">备注</text>
+          <textarea class="form-textarea" value="{{form.notes}}" bindinput="onInput" data-field="notes" placeholder="重要备注（如：不喜欢吹风机、怕打雷等）" />
+        </view>
+      </view>
+      <view class="modal__actions">
+        <button class="btn-secondary" bindtap="hideModal">取消</button>
+        <button class="btn-primary" bindtap="onSave">保存</button>
+      </view>
+    </view>
+  </view>
+</view>

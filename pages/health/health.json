@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "健康记录",
+  "usingComponents": {
+    "health-record-card": "/components/health-record-card/health-record-card",
+    "empty-state": "/components/empty-state/empty-state",
+    "mini-chart": "/components/mini-chart/mini-chart",
+    "loading-state": "/components/loading-state/loading-state"
+  }
+}

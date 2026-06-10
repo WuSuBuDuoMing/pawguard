@@ -1,0 +1,19 @@
+<view class="health-card {{isDarkMode ? 'dark' : ''}}" bindtap="onTap">
+  <view class="health-card__header">
+    <view class="health-card__type-tag {{record.type}}">
+      <text>{{typeLabel}}</text>
+    </view>
+    <text class="health-card__date">{{record.date}}</text>
+  </view>
+  <text class="health-card__title">{{record.title}}</text>
+  <view class="health-card__details" wx:if="{{record.clinic}}">
+    <text class="health-card__clinic">🏥 {{record.clinic}}</text>
+  </view>
+  <text class="health-card__notes" wx:if="{{record.notes}}">{{record.notes}}</text>
+  <view class="health-card__next" wx:if="{{record.nextDate}}">
+    <text class="health-card__next-label">下次：</text>
+    <text class="health-card__next-date {{isOverdue ? 'overdue' : isUpcoming ? 'upcoming' : ''}}">{{record.nextDate}}</text>
+    <text wx:if="{{isOverdue}}" class="health-card__badge overdue">⚠️ 已过期</text>
+    <text wx:elif="{{isUpcoming}}" class="health-card__badge upcoming">⏰ 即将到期</text>
+  </view>
+</view>

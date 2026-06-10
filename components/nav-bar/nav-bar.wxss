@@ -1,0 +1,10 @@
+.nav-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+  display: flex; align-items: center; height: 44px;
+  background: var(--card-bg, #FFF);
+  border-bottom: 1rpx solid var(--border-color, #EEE);
+}
+.nav-bar__left { width: 80rpx; display: flex; align-items: center; justify-content: center; }
+.nav-bar__back { font-size: 44rpx; color: var(--text-primary, #333); }
+.nav-bar__title { flex: 1; text-align: center; font-size: 32rpx; font-weight: 600; color: var(--text-primary, #333); }
+.nav-bar__right { width: 80rpx; }

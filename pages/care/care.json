@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "日常照护",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "care-task-card": "/components/care-task-card/care-task-card",
+    "progress-ring": "/components/progress-ring/progress-ring",
+    "empty-state": "/components/empty-state/empty-state"
+  }
+}

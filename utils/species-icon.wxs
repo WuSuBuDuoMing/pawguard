@@ -1,0 +1,25 @@
+/**
+ * species-icon.wxs - 物种图标工具（WXS 模块）
+ * 在 WXML 模板中使用：{{speciesIcon.getIcon(item.species)}}
+ */
+function getIcon(species) {
+  if (species === 'dog') return '🐶';
+  if (species === 'cat') return '🐱';
+  if (species === 'rabbit') return '🐰';
+  if (species === 'hamster') return '🐹';
+  if (species === 'bird') return '🐦';
+  if (species === 'reptile') return '🦎';
+  return '🐾';
+}
+
+function getName(species) {
+  if (species === 'dog') return '狗';
+  if (species === 'cat') return '猫';
+  if (species === 'rabbit') return '兔子';
+  if (species === 'hamster') return '仓鼠';
+  if (species === 'bird') return '鸟类';
+  if (species === 'reptile') return '爬宠';
+  return '宠物';
+}
+
+module.exports = { getIcon: getIcon, getName: getName };

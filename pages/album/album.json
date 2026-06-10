@@ -1,0 +1,1 @@
+{ "navigationBarTitleText": "宠物相册", "usingComponents": { "album-grid": "/components/album-grid/album-grid", "empty-state": "/components/empty-state/empty-state" } }

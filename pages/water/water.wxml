@@ -1,0 +1,145 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">💧 饮水管理</view>
+
+  <!-- 宠物切换 -->
+  <picker mode="selector" range="{{petNames}}" value="{{petIndex}}" bindchange="onPetChange">
+    <view class="pet-picker fade-in" style="animation-delay:0.05s;">
+      <text>{{currentPetSpecies === 'dog' ? '🐶' : currentPetSpecies === 'cat' ? '🐱' : currentPetSpecies === 'rabbit' ? '🐰' : currentPetSpecies === 'hamster' ? '🐹' : currentPetSpecies === 'bird' ? '🐦' : currentPetSpecies === 'reptile' ? '🦎' : '🐾'}}</text>
+      <text>{{currentPetName}} ▾</text>
+    </view>
+  </picker>
+
+  <!-- 异常提醒 -->
+  <view class="anomaly-banner fade-in" wx:for="{{anomalies}}" wx:key="type" wx:if="{{anomalies.length > 0}}" style="animation-delay:0.06s;">
+    <view class="anomaly-card {{item.severity}}">
+      <text class="anomaly-card__icon">{{item.severity === 'urgent' ? '🚨' : '⚠️'}}</text>
+      <text class="anomaly-card__text">{{item.message}}</text>
+    </view>
+  </view>
+
+  <!-- 今日概览 -->
+  <view class="overview-cards fade-in" style="animation-delay:0.08s;">
+    <view class="ov-card">
+      <text class="ov-card__icon">💧</text>
+      <text class="ov-card__num">{{todayIntake}}</text>
+      <text class="ov-card__label">今日饮水(ml)</text>
+    </view>
+    <view class="ov-card">
+      <text class="ov-card__icon">🔄</text>
+      <text class="ov-card__num">{{todayChanges}}</text>
+      <text class="ov-card__label">换水次数</text>
+    </view>
+    <view class="ov-card">
+      <text class="ov-card__icon">📊</text>
+      <text class="ov-card__num">{{weekAvg}}</text>
+      <text class="ov-card__label">周均(ml)</text>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="quick-actions fade-in" style="animation-delay:0.1s;">
+    <text class="quick-actions__title">⚡ 快捷记录</text>
+    <view class="quick-actions__grid">
+      <view class="quick-action-btn" bindtap="onQuickAdd" data-amount="200" data-type="intake">
+        <text class="quick-action-btn__icon">💧</text>
+        <text class="quick-action-btn__label">+200ml</text>
+      </view>
+      <view class="quick-action-btn" bindtap="onQuickAdd" data-amount="500" data-type="intake">
+        <text class="quick-action-btn__icon">💧</text>
+        <text class="quick-action-btn__label">+500ml</text>
+      </view>
+      <view class="quick-action-btn" bindtap="showAdd" data-type="change">
+        <text class="quick-action-btn__icon">🔄</text>
+        <text class="quick-action-btn__label">换水</text>
+      </view>
+      <view class="quick-action-btn" bindtap="showAdd">
+        <text class="quick-action-btn__icon">📝</text>
+        <text class="quick-action-btn__label">详细记录</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 饮水趋势图 -->
+  <view class="section card fade-in" style="animation-delay:0.12s;">
+    <view class="section__header">
+      <text class="section__title">📈 两周饮水趋势</text>
+    </view>
+    <mini-chart wx:if="{{weekTrend.length > 0}}" data="{{weekTrend}}" color="#7EC8E3" width="{{chartWidth}}" height="160" showLabels="{{true}}" />
+  </view>
+
+  <!-- 今日记录列表 -->
+  <view class="section fade-in" style="animation-delay:0.15s;">
+    <view class="section__header">
+      <text class="section__title">📋 今日记录</text>
+    </view>
+    <view class="record-list">
+      <view class="record-item" wx:for="{{todayRecords}}" wx:key="id">
+        <view class="record-item__icon-wrap {{item.type}}">
+          <text>{{item.type === 'change' ? '🔄' : '💧'}}</text>
+        </view>
+        <view class="record-item__content">
+          <text class="record-item__title">{{item.type === 'change' ? '换水' : '饮水记录'}}</text>
+          <text class="record-item__detail">{{item.time}} · {{item.amount}}{{item.unit}}</text>
+          <text class="record-item__notes" wx:if="{{item.notes}}">{{item.notes}}</text>
+        </view>
+        <view class="record-item__badge {{item.type}}">
+          <text>{{item.type === 'change' ? '换水' : '饮水'}}</text>
+        </view>
+      </view>
+    </view>
+    <empty-state wx:if="{{todayRecords.length === 0}}" icon="💧" title="今天还没有饮水记录" />
+  </view>
+
+  <view style="height: 120rpx;"></view>
+
+  <!-- FAB -->
+  <view class="fab-btn" bindtap="showAdd">
+    <text>+</text>
+  </view>
+
+  <!-- 添加弹窗 -->
+  <view class="modal-mask" wx:if="{{showAddModal}}" bindtap="hideAdd">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">添加饮水记录</text>
+        <view class="modal-close" bindtap="hideAdd"><text>✕</text></view>
+      </view>
+      <scroll-view scroll-y class="modal-body">
+        <view class="form-group">
+          <text class="form-label">记录类型</text>
+          <picker mode="selector" range="{{recordTypes}}" range-key="name" bindchange="onTypeChange">
+            <view class="form-picker">{{form.type === 'intake' ? '💧 饮水记录' : '🔄 换水记录'}} ▾</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <text class="form-label">{{form.type === 'intake' ? '饮水量(ml)' : '换水量(ml)'}} *</text>
+          <input class="form-input" type="digit" value="{{form.amount}}" placeholder="200" bindinput="onFormInput" data-field="amount" />
+        </view>
+
+        <view class="form-group" wx:if="{{form.type === 'change'}}">
+          <text class="form-label">水源类型</text>
+          <picker mode="selector" range="{{waterTypes}}" bindchange="onWaterTypeChange">
+            <view class="form-picker">{{form.waterType}} ▾</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <text class="form-label">时间</text>
+          <picker mode="time" value="{{form.time}}" bindchange="onTimeChange">
+            <view class="form-picker">{{form.time}} ▾</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <text class="form-label">备注</text>
+          <textarea class="form-textarea" value="{{form.notes}}" placeholder="可选备注" bindinput="onFormInput" data-field="notes" />
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="hideAdd">取消</view>
+        <view class="modal-btn confirm" bindtap="onSave">保存</view>
+      </view>
+    </view>
+  </view>
+</view>

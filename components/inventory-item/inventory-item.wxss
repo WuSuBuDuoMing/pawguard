@@ -1,0 +1,21 @@
+.inv-item {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--card-bg, #FFF); border-radius: 20rpx;
+  padding: 24rpx; margin-bottom: 16rpx; box-shadow: var(--shadow);
+}
+.inv-item.low-stock { border-left: 6rpx solid #FF4D4F; }
+.inv-item__left { display: flex; align-items: center; flex: 1; }
+.inv-item__type-icon {
+  width: 64rpx; height: 64rpx; border-radius: 16rpx;
+  background: rgba(255,159,90,0.1); display: flex;
+  align-items: center; justify-content: center; font-size: 28rpx;
+}
+.inv-item__info { margin-left: 16rpx; }
+.inv-item__name { font-size: 26rpx; font-weight: 500; color: var(--text-primary, #333); display: block; }
+.inv-item__brand { font-size: 20rpx; color: var(--text-secondary, #888); }
+.inv-item__right { text-align: right; min-width: 120rpx; }
+.inv-item__stock { font-size: 28rpx; font-weight: 600; color: var(--text-primary, #333); display: block; }
+.inv-item__stock.warning { color: #FF4D4F; }
+.inv-item__bar { height: 8rpx; background: rgba(0,0,0,0.06); border-radius: 4rpx; margin-top: 8rpx; width: 100rpx; }
+.inv-item__bar-fill { height: 100%; border-radius: 4rpx; transition: width 0.3s; }
+.inv-item__label { font-size: 20rpx; color: #FF4D4F; margin-top: 4rpx; display: block; }

@@ -1,0 +1,8 @@
+.chart { background: var(--card-bg, #FFF); border-radius: 24rpx; padding: 24rpx; box-shadow: var(--shadow); margin-bottom: 20rpx; }
+.chart__title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
+.chart__title text:first-child { font-size: 28rpx; font-weight: 600; color: var(--text-primary); }
+.chart__latest { font-size: 32rpx; font-weight: 700; color: #FF9F5A; }
+.chart__canvas-wrap { display: flex; justify-content: center; }
+.chart__canvas { }
+.chart__labels { display: flex; justify-content: space-between; margin-top: 12rpx; }
+.chart__label { font-size: 20rpx; color: var(--text-secondary); }

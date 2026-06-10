@@ -1,0 +1,1 @@
+{ "navigationBarTitleText": "宠物账本", "usingComponents": { "expense-card": "/components/expense-card/expense-card", "empty-state": "/components/empty-state/empty-state" } }

@@ -1,0 +1,25 @@
+.health-card {
+  background: var(--card-bg, #FFF); border-radius: 20rpx;
+  padding: 24rpx; margin-bottom: 16rpx; box-shadow: var(--shadow);
+}
+.health-card__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.health-card__type-tag {
+  padding: 4rpx 16rpx; border-radius: 16rpx; font-size: 22rpx;
+}
+.health-card__type-tag.vaccine { background: rgba(126,200,227,0.15); color: #7EC8E3; }
+.health-card__type-tag.deworming { background: rgba(82,196,26,0.15); color: #52C41A; }
+.health-card__type-tag.visit { background: rgba(255,159,90,0.15); color: #FF9F5A; }
+.health-card__type-tag.medication { background: rgba(255,181,194,0.15); color: #FFB5C2; }
+.health-card__type-tag.abnormal { background: rgba(255,77,79,0.15); color: #FF4D4F; }
+.health-card__date { font-size: 22rpx; color: var(--text-secondary, #888); }
+.health-card__title { font-size: 28rpx; font-weight: 500; color: var(--text-primary, #333); display: block; margin-bottom: 8rpx; }
+.health-card__clinic { font-size: 22rpx; color: var(--text-secondary, #888); }
+.health-card__notes { font-size: 24rpx; color: var(--text-secondary, #888); margin-top: 8rpx; display: block; line-height: 1.5; }
+.health-card__next { display: flex; align-items: center; margin-top: 12rpx; flex-wrap: wrap; }
+.health-card__next-label { font-size: 22rpx; color: var(--text-secondary, #888); }
+.health-card__next-date { font-size: 22rpx; color: var(--text-primary, #333); }
+.health-card__next-date.overdue { color: #FF4D4F; }
+.health-card__next-date.upcoming { color: #FAAD14; }
+.health-card__badge { font-size: 20rpx; margin-left: 8rpx; padding: 2rpx 10rpx; border-radius: 12rpx; }
+.health-card__badge.overdue { background: rgba(255,77,79,0.1); color: #FF4D4F; }
+.health-card__badge.upcoming { background: rgba(250,173,20,0.1); color: #FAAD14; }

@@ -1,0 +1,114 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">🎯 训练打卡</view>
+  <picker mode="selector" range="{{petNames}}" value="{{petIndex}}" bindchange="onPetChange">
+    <view class="pet-picker fade-in" style="animation-delay:0.05s;">
+      <text>{{currentPetSpecies === 'dog' ? '🐶' : currentPetSpecies === 'cat' ? '🐱' : currentPetSpecies === 'rabbit' ? '🐰' : currentPetSpecies === 'hamster' ? '🐹' : currentPetSpecies === 'bird' ? '🐦' : currentPetSpecies === 'reptile' ? '🦎' : '🐾'}}</text>
+      <text>{{currentPetName}} ▾</text>
+    </view>
+  </picker>
+
+  <!-- 连续训练 -->
+  <view class="streak-banner fade-in" style="animation-delay:0.08s;" wx:if="{{streak > 0}}">
+    <view class="streak-banner__fire">🔥</view>
+    <view class="streak-banner__info">
+      <text class="streak-banner__num">连续训练 {{streak}} 天</text>
+      <text class="streak-banner__tip">{{suggestion}}</text>
+    </view>
+  </view>
+
+  <!-- 技能进度 -->
+  <view class="section fade-in" style="animation-delay:0.1s;">
+    <view class="section__header"><text class="section__title">🏅 技能进度</text></view>
+    <view class="skill-grid">
+      <view class="skill-card" wx:for="{{commands}}" wx:key="command" bindtap="onSkillTap" data-cmd="{{item}}">
+        <view class="skill-card__top">
+          <text class="skill-card__name">{{item.command}}</text>
+          <view class="skill-card__badge-wrap" wx:if="{{item.badge}}">
+            <text class="skill-card__badge">{{item.badge.icon}}</text>
+            <text class="skill-card__badge-name">{{item.badge.name}}</text>
+          </view>
+        </view>
+        <view class="skill-card__progress">
+          <view class="skill-card__bar"><view class="skill-card__bar-fill" style="width: {{item.successRate}}%;"></view></view>
+        </view>
+        <view class="skill-card__bottom">
+          <text class="skill-card__count">{{item.successCount}}/{{item.totalCount}}</text>
+          <text class="skill-card__rate" style="color: {{item.successRate >= 80 ? '#52C41A' : item.successRate >= 50 ? '#FAAD14' : '#FF4D4F'}};">{{item.successRate}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 本周报告 -->
+  <view class="section card fade-in" style="animation-delay:0.15s;" wx:if="{{weeklyReport}}">
+    <view class="section__header"><text class="section__title">📊 本周报告</text></view>
+    <view class="report-card">
+      <view class="report-item">
+        <text class="report-num">{{weeklyReport.totalSessions}}</text>
+        <text class="report-label">训练次数</text>
+      </view>
+      <view class="report-item">
+        <view class="report-ring">
+          <text class="report-ring__val">{{weeklyReport.successRate}}%</text>
+        </view>
+        <text class="report-label">成功率</text>
+      </view>
+      <view class="report-item">
+        <text class="report-num">{{weeklyReport.totalDuration}}</text>
+        <text class="report-label">分钟</text>
+      </view>
+    </view>
+    <view class="report-commands" wx:if="{{weeklyReport.commands.length > 0}}">
+      <text class="report-commands__label">本周练习：</text>
+      <text class="tag tag-orange" wx:for="{{weeklyReport.commands}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 训练记录 -->
+  <view class="section fade-in" style="animation-delay:0.2s;">
+    <view class="section__header"><text class="section__title">📝 训练记录</text></view>
+    <training-card wx:for="{{records}}" wx:key="id" record="{{item}}" />
+    <empty-state wx:if="{{records.length === 0}}" icon="🎯" title="还没有训练记录" desc="快去训练你的毛孩子吧" />
+  </view>
+
+  <view style="height: 140rpx;"></view>
+
+  <!-- FAB -->
+  <view class="fab-btn" bindtap="showAdd"><text>+</text></view>
+
+  <!-- 添加训练记录弹窗 -->
+  <view class="modal-mask" wx:if="{{showAddModal}}" bindtap="hideAdd">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">添加训练记录</text>
+        <view class="modal-close" bindtap="hideAdd"><text>✕</text></view>
+      </view>
+      <scroll-view scroll-y class="modal-body">
+        <view class="form-group">
+          <text class="form-label">训练科目</text>
+          <picker mode="selector" range="{{commandOptions}}" bindchange="onCommandChange">
+            <view class="form-picker">{{form.command}} ▾</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="form-label">训练结果</text>
+          <picker mode="selector" range="{{resultOptions}}" range-key="name" bindchange="onResultChange">
+            <view class="form-picker">{{form.result === 'success' ? '✅ 成功' : form.result === 'partial' ? '⚠️ 部分完成' : '❌ 未完成'}} ▾</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="form-label">训练时长(分钟)</text>
+          <input class="form-input" type="number" value="{{form.duration}}" placeholder="可选" bindinput="onFormInput" data-field="duration" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">备注</text>
+          <textarea class="form-textarea" value="{{form.note}}" placeholder="训练表现如何？" bindinput="onFormInput" data-field="note" />
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="hideAdd">取消</view>
+        <view class="modal-btn confirm" bindtap="onSave">保存</view>
+      </view>
+    </view>
+  </view>
+</view>

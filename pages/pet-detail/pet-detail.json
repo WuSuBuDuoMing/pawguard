@@ -1,0 +1,1 @@
+{ "navigationBarTitleText": "宠物详情", "usingComponents": { "health-record-card": "/components/health-record-card/health-record-card", "training-card": "/components/training-card/training-card", "mini-chart": "/components/mini-chart/mini-chart" } }

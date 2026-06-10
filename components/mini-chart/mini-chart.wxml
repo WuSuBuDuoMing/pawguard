@@ -1,0 +1,12 @@
+<view class="chart">
+  <view class="chart__title" wx:if="{{title}}">
+    <text>{{title}}</text>
+    <text class="chart__latest" wx:if="{{latest}}">{{latest}}kg</text>
+  </view>
+  <view class="chart__canvas-wrap">
+    <canvas canvas-id="miniChart" type="2d" id="miniChart" class="chart__canvas" style="width:{{width}}px;height:{{height}}px;"></canvas>
+  </view>
+  <view class="chart__labels" wx:if="{{showLabels}}">
+    <text wx:for="{{labels}}" wx:key="*this" class="chart__label">{{item}}</text>
+  </view>
+</view>

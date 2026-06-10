@@ -1,0 +1,191 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">🍽️ 喂食管理</view>
+
+  <!-- 宠物切换 -->
+  <picker mode="selector" range="{{petNames}}" value="{{petIndex}}" bindchange="onPetChange">
+    <view class="pet-picker fade-in" style="animation-delay:0.05s;">
+      <text>{{currentPetSpecies === 'dog' ? '🐶' : currentPetSpecies === 'cat' ? '🐱' : currentPetSpecies === 'rabbit' ? '🐰' : currentPetSpecies === 'hamster' ? '🐹' : currentPetSpecies === 'bird' ? '🐦' : currentPetSpecies === 'reptile' ? '🦎' : '🐾'}}</text>
+      <text>{{currentPetName}} ▾</text>
+    </view>
+  </picker>
+
+  <!-- 今日概览 -->
+  <view class="overview-cards fade-in" style="animation-delay:0.08s;">
+    <view class="ov-card">
+      <text class="ov-card__icon">🍽️</text>
+      <text class="ov-card__num">{{todayMealCount}}</text>
+      <text class="ov-card__label">今日餐次</text>
+    </view>
+    <view class="ov-card">
+      <text class="ov-card__icon">⚖️</text>
+      <text class="ov-card__num">{{totalTodayGrams}}</text>
+      <text class="ov-card__label">总克数(g)</text>
+    </view>
+    <view class="ov-card">
+      <text class="ov-card__icon">😊</text>
+      <text class="ov-card__num">{{normalPct}}%</text>
+      <text class="ov-card__label">食欲正常率</text>
+    </view>
+  </view>
+
+  <!-- Tab 切换 -->
+  <view class="tabs fade-in" style="animation-delay:0.1s;">
+    <view class="tab {{activeTab === 'today' ? 'active' : ''}}" bindtap="switchTab" data-tab="today">今日记录</view>
+    <view class="tab {{activeTab === 'history' ? 'active' : ''}}" bindtap="switchTab" data-tab="history">历史记录</view>
+    <view class="tab {{activeTab === 'stats' ? 'active' : ''}}" bindtap="switchTab" data-tab="stats">数据统计</view>
+  </view>
+
+  <!-- 快捷喂食 -->
+  <view class="quick-food fade-in" style="animation-delay:0.11s;" wx:if="{{activeTab === 'today'}}">
+    <text class="quick-food__title">⚡ 快捷记录</text>
+    <view class="quick-food__grid">
+      <view class="quick-food__btn" bindtap="onQuickFood" data-name="{{currentPetSpecies === 'dog' ? '狗粮' : '猫粮'}}" data-type="主粮" data-grams="{{currentPetSpecies === 'dog' ? 150 : 50}}">
+        <text class="quick-food__icon">🥣</text>
+        <text class="quick-food__label">{{currentPetSpecies === 'dog' ? '狗粮 150g' : '猫粮 50g'}}</text>
+      </view>
+      <view class="quick-food__btn" bindtap="showAdd">
+        <text class="quick-food__icon">📝</text>
+        <text class="quick-food__label">自定义</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日记录 -->
+  <view wx:if="{{activeTab === 'today'}}">
+    <view class="feeding-list fade-in" style="animation-delay:0.12s;">
+      <view class="feeding-card" wx:for="{{todayFeedings}}" wx:key="id">
+        <view class="feeding-card__time-col">
+          <text class="feeding-card__time">{{item.time}}</text>
+          <view class="feeding-card__dot {{item.finished ? 'done' : 'skip'}}"></view>
+        </view>
+        <view class="feeding-card__content">
+          <view class="feeding-card__header">
+            <text class="feeding-card__name">{{item.foodName}}</text>
+            <text class="feeding-card__type-tag">{{item.foodType}}</text>
+          </view>
+          <view class="feeding-card__detail">
+            <text class="feeding-card__grams">{{item.grams}}g</text>
+            <text class="feeding-card__appetite {{item.appetite === '正常' || item.appetite === '狼吞虎咽' ? 'good' : item.appetite === '不吃' ? 'bad' : 'warn'}}">{{item.appetite}}</text>
+            <text class="feeding-card__finished">{{item.finished ? '✅ 吃完' : '❌ 剩余'}}</text>
+          </view>
+          <text class="feeding-card__notes" wx:if="{{item.notes}}">{{item.notes}}</text>
+        </view>
+      </view>
+    </view>
+    <empty-state wx:if="{{todayFeedings.length === 0}}" icon="🍽️" title="今天还没有喂食记录" desc="点击下方按钮添加" />
+  </view>
+
+  <!-- 历史记录 -->
+  <view wx:if="{{activeTab === 'history'}}">
+    <view class="history-list fade-in" style="animation-delay:0.12s;">
+      <view class="history-date-group" wx:for="{{historyRecords}}" wx:key="id">
+        <view class="history-card">
+          <view class="history-card__left">
+            <text class="history-card__date">{{item.date}}</text>
+            <text class="history-card__time">{{item.time}}</text>
+          </view>
+          <view class="history-card__center">
+            <text class="history-card__name">{{item.foodName}}</text>
+            <text class="history-card__meta">{{item.foodType}} · {{item.grams}}g</text>
+          </view>
+          <view class="history-card__right">
+            <text class="history-card__appetite-badge {{item.appetite === '正常' || item.appetite === '狼吞虎咽' ? 'good' : item.appetite === '不吃' ? 'bad' : 'warn'}}">{{item.appetite}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <empty-state wx:if="{{historyRecords.length === 0}}" icon="📋" title="暂无历史记录" />
+  </view>
+
+  <!-- 数据统计 -->
+  <view wx:if="{{activeTab === 'stats'}}">
+    <view class="section card fade-in" style="animation-delay:0.12s;">
+      <view class="section__header">
+        <text class="section__title">📊 一周喂食量趋势</text>
+      </view>
+      <mini-chart wx:if="{{trendData.length > 0}}" data="{{trendData}}" color="#FF9F5A" width="{{chartWidth}}" height="140" showLabels="{{true}}" />
+      <view wx:else class="no-data-hint">数据不足，记录更多喂食后显示趋势</view>
+    </view>
+
+    <view class="section card fade-in" style="animation-delay:0.15s;">
+      <view class="section__header">
+        <text class="section__title">🥘 食物类型分布</text>
+      </view>
+      <view class="food-dist" wx:if="{{foodDistribution.length > 0}}">
+        <view class="food-dist-item" wx:for="{{foodDistribution}}" wx:key="type">
+          <view class="food-dist-item__header">
+            <text class="food-dist-item__name">{{item.type}}</text>
+            <text class="food-dist-item__grams">{{item.grams}}g</text>
+          </view>
+          <view class="food-dist-item__bar-wrap">
+            <view class="food-dist-item__bar" style="width:{{foodDistribution[0].grams > 0 ? (item.grams / foodDistribution[0].grams * 100) : 0}}%;background:{{index === 0 ? '#FF9F5A' : index === 1 ? '#7EC8E3' : index === 2 ? '#FFB5C2' : '#52C41A'}};"></view>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="no-data-hint">暂无数据</view>
+    </view>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="fab-btn" bindtap="showAdd">
+    <text>+</text>
+  </view>
+
+  <!-- 添加弹窗 -->
+  <view class="modal-mask" wx:if="{{showAddModal}}" bindtap="hideAdd">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">添加喂食记录</text>
+        <view class="modal-close" bindtap="hideAdd"><text>✕</text></view>
+      </view>
+
+      <scroll-view scroll-y class="modal-body">
+        <view class="form-group">
+          <text class="form-label">食物名称 *</text>
+          <input class="form-input" value="{{form.foodName}}" placeholder="如：渴望猫粮" bindinput="onFormInput" data-field="foodName" />
+        </view>
+
+        <view class="form-group">
+          <text class="form-label">食物类型</text>
+          <picker mode="selector" range="{{foodTypes}}" bindchange="onFoodTypeChange">
+            <view class="form-picker">{{form.foodType}} ▾</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <text class="form-label">克数(g) *</text>
+          <input class="form-input" type="digit" value="{{form.grams}}" placeholder="50" bindinput="onFormInput" data-field="grams" />
+        </view>
+
+        <view class="form-group">
+          <text class="form-label">喂食时间</text>
+          <picker mode="time" value="{{form.time}}" bindchange="onTimeChange">
+            <view class="form-picker">{{form.time}} ▾</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <text class="form-label">食欲状态</text>
+          <picker mode="selector" range="{{appetiteOptions}}" bindchange="onAppetiteChange">
+            <view class="form-picker">{{form.appetite}} ▾</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <text class="form-label">是否吃完</text>
+          <switch checked="{{form.finished}}" bindchange="onFinishedChange" color="#FF9F5A" />
+        </view>
+
+        <view class="form-group">
+          <text class="form-label">备注</text>
+          <textarea class="form-textarea" value="{{form.notes}}" placeholder="可选备注" bindinput="onFormInput" data-field="notes" />
+        </view>
+      </scroll-view>
+
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="hideAdd">取消</view>
+        <view class="modal-btn confirm" bindtap="onSaveFeeding">保存</view>
+      </view>
+    </view>
+  </view>
+</view>

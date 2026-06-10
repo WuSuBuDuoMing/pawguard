@@ -1,0 +1,102 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">💊 健康记录</view>
+  <picker mode="selector" range="{{petNames}}" value="{{petIndex}}" bindchange="onPetChange">
+    <view class="pet-picker fade-in" style="animation-delay:0.05s;">
+      <text>{{currentPetSpecies === 'dog' ? '🐶' : currentPetSpecies === 'cat' ? '🐱' : currentPetSpecies === 'rabbit' ? '🐰' : currentPetSpecies === 'hamster' ? '🐹' : currentPetSpecies === 'bird' ? '🐦' : currentPetSpecies === 'reptile' ? '🦎' : '🐾'}}</text>
+      <text>{{currentPetName}} ▾</text>
+    </view>
+  </picker>
+
+  <!-- 健康总览 -->
+  <view class="summary-grid fade-in" style="animation-delay:0.1s;">
+    <view class="summary-tile" wx:for="{{summaryItems}}" wx:key="key">
+      <text class="summary-tile__num" style="color:{{item.color}};">{{item.count}}</text>
+      <text class="summary-tile__label">{{item.label}}</text>
+      <view class="summary-tile__dot" style="background:{{item.color}};"></view>
+    </view>
+  </view>
+
+  <!-- 体重卡片 -->
+  <view class="weight-card fade-in" style="animation-delay:0.11s;" wx:if="{{currentWeight > 0}}">
+    <view class="weight-card__left">
+      <text class="weight-card__icon">⚖️</text>
+      <view class="weight-card__info">
+        <text class="weight-card__value">{{currentWeight}}kg</text>
+        <text class="weight-card__trend" wx:if="{{weightTrend}}">{{weightTrend}}</text>
+      </view>
+    </view>
+    <view class="weight-card__right" bindtap="onRecordWeight">
+      <text class="weight-card__btn">记录体重</text>
+    </view>
+  </view>
+
+  <!-- 体重趋势图 -->
+  <view class="weight-chart fade-in" style="animation-delay:0.12s;" wx:if="{{weightHistory.length >= 2}}">
+    <view class="weight-chart__header">
+      <text class="weight-chart__title">📈 体重趋势</text>
+    </view>
+    <mini-chart data="{{weightHistory}}" color="#FF9F5A" width="{{chartWidth}}" height="140" showLabels="{{true}}" />
+  </view>
+
+  <!-- 提醒卡片 -->
+  <view class="reminder-cards fade-in" style="animation-delay:0.12s;" wx:if="{{urgentReminders.length > 0}}">
+    <view class="reminder-card {{item._isOverdue ? 'overdue' : 'upcoming'}}" wx:for="{{urgentReminders}}" wx:key="id">
+      <text class="reminder-card__icon">{{item._isOverdue ? '🚨' : '⚠️'}}</text>
+      <view class="reminder-card__info">
+        <text class="reminder-card__title">{{item.title}}</text>
+        <text class="reminder-card__date">{{item._isOverdue ? '已过期' : '到期日'}}: {{item.nextDate}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选 -->
+  <scroll-view scroll-x class="filter-scroll fade-in" style="animation-delay:0.15s;" enhanced show-scrollbar="{{false}}">
+    <view class="filter-bar">
+      <view class="filter-chip {{activeFilter === '' ? 'active' : ''}}" bindtap="onFilter" data-type="">全部</view>
+      <view class="filter-chip {{activeFilter === 'vaccine' ? 'active' : ''}}" bindtap="onFilter" data-type="vaccine">💉 疫苗</view>
+      <view class="filter-chip {{activeFilter === 'deworming' ? 'active' : ''}}" bindtap="onFilter" data-type="deworming">🐛 驱虫</view>
+      <view class="filter-chip {{activeFilter === 'visit' ? 'active' : ''}}" bindtap="onFilter" data-type="visit">🏥 就诊</view>
+      <view class="filter-chip {{activeFilter === 'medication' ? 'active' : ''}}" bindtap="onFilter" data-type="medication">💊 用药</view>
+      <view class="filter-chip {{activeFilter === 'abnormal' ? 'active' : ''}}" bindtap="onFilter" data-type="abnormal">🔍 异常</view>
+    </view>
+  </scroll-view>
+
+  <!-- 时间线 -->
+  <view class="timeline fade-in" style="animation-delay:0.2s;">
+    <view class="timeline__item {{item.type}}" wx:for="{{filteredRecords}}" wx:key="id">
+      <view class="timeline__node" style="background: {{typeColors[item.type]}};"></view>
+      <view class="timeline__line" wx:if="{{index < filteredRecords.length - 1}}"></view>
+      <view class="timeline__card" bindtap="onRecordTap" data-record="{{item}}">
+        <view class="timeline__header">
+          <view class="timeline__type-tag" style="background: {{typeColors[item.type]}}22; color: {{typeColors[item.type]}};">
+            <text>{{typeLabels[item.type]}}</text>
+          </view>
+          <text class="timeline__date">{{item.date}}</text>
+        </view>
+        <text class="timeline__title">{{item.title}}</text>
+        <text class="timeline__clinic" wx:if="{{item.clinic}}">🏥 {{item.clinic}}</text>
+        <text class="timeline__notes" wx:if="{{item.notes}}">{{item.notes}}</text>
+        <view class="timeline__next" wx:if="{{item.nextDate}}">
+          <text class="timeline__next-label">下次：</text>
+          <text class="timeline__next-date" style="color: {{item._isOverdue ? '#FF4D4F' : item._isUpcoming ? '#FAAD14' : 'var(--text-primary)'}};">{{item.nextDate}}</text>
+          <text class="timeline__badge" wx:if="{{item._isOverdue}}" style="background:rgba(255,77,79,0.1);color:#FF4D4F;">过期</text>
+          <text class="timeline__badge" wx:elif="{{item._isUpcoming}}" style="background:rgba(250,173,20,0.1);color:#FAAD14;">即将</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <empty-state wx:if="{{filteredRecords.length === 0 && !loading}}" icon="💊" title="暂无记录" />
+
+  <loading-state wx:if="{{loading}}" text="加载健康数据中..." />
+
+  <!-- 添加记录 FAB -->
+  <view class="fab-btn" bindtap="onAddRecord">
+    <text>+</text>
+  </view>
+
+  <!-- 免责声明 -->
+  <view class="disclaimer fade-in" style="animation-delay:0.25s;">
+    <text>⚕️ 本模块仅用于记录和提醒，不提供医疗诊断。如有健康疑虑，请咨询专业兽医。</text>
+  </view>
+</view>

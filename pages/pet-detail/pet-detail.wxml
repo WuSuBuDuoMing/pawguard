@@ -1,0 +1,157 @@
+<view class="page {{themeClass}}">
+  <!-- 宠物头部 -->
+  <view class="pet-header" wx:if="{{pet}}">
+    <view class="pet-header__bg {{pet.species}}"></view>
+    <view class="pet-header__content">
+      <view class="pet-header__avatar">
+        <text>{{pet.species === 'dog' ? '🐶' : pet.species === 'cat' ? '🐱' : pet.species === 'rabbit' ? '🐰' : pet.species === 'hamster' ? '🐹' : pet.species === 'bird' ? '🐦' : pet.species === 'reptile' ? '🦎' : '🐾'}}</text>
+      </view>
+      <text class="pet-header__name">{{pet.name}}</text>
+      <text class="pet-header__breed">{{pet.breed}} · {{pet.gender === 'male' ? '♂' : '♀'}} · {{age}} {{pet.neutered ? '· 已绝育' : ''}}</text>
+      <view class="pet-header__tags">
+        <text class="tag" wx:for="{{pet.personality}}" wx:key="*this" style="background:rgba(255,255,255,0.2);color:#FFF;">{{item}}</text>
+      </view>
+    </view>
+    <view class="pet-header__edit" bindtap="onEdit">
+      <text>✏️</text>
+    </view>
+  </view>
+
+  <!-- 统计卡 -->
+  <view class="stats-row fade-in" style="animation-delay:0.05s;">
+    <view class="stat-card">
+      <text class="stat-card__num" style="color:#FF9F5A;">{{weight}}</text>
+      <text class="stat-card__unit">kg</text>
+      <text class="stat-card__label">体重</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-card__num" style="color:#7EC8E3;">{{todayFeedingCount}}</text>
+      <text class="stat-card__label">今日喂食</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-card__num" style="color:#52C41A;">{{todayWaterIntake}}</text>
+      <text class="stat-card__unit">ml</text>
+      <text class="stat-card__label">今日饮水</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-card__num" style="color:#FFB5C2;">¥{{expenseTotal}}</text>
+      <text class="stat-card__label">本月开销</text>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="note-card fade-in" style="animation-delay:0.08s;" wx:if="{{pet.notes}}">
+    <text class="note-card__icon">📝</text>
+    <text class="note-card__text">{{pet.notes}}</text>
+  </view>
+
+  <!-- 体重趋势图 -->
+  <view class="chart-wrap fade-in" style="animation-delay:0.09s;" wx:if="{{weightData.length >= 2}}">
+    <mini-chart data="{{weightData}}" title="⚖️ 体重趋势" latest="{{weight}}" color="#FF9F5A" width="{{chartWidth}}" height="160" />
+    <!-- 体重目标 -->
+    <view class="weight-goal" wx:if="{{weightGoal}}" bindtap="onEditGoal">
+      <text class="weight-goal__label">🎯 目标体重</text>
+      <view class="weight-goal__progress">
+        <view class="weight-goal__bar">
+          <view class="weight-goal__bar-fill" style="width: {{weightGoalPct}}%;"></view>
+        </view>
+        <text class="weight-goal__text">{{weightGoal}}kg ({{weightGoalPct}}%)</text>
+      </view>
+    </view>
+    <view class="weight-goal-set" wx:else bindtap="onEditGoal">
+      <text>🎯 设定体重目标</text>
+    </view>
+  </view>
+
+  <!-- Tab 切换 -->
+  <view class="tabs fade-in" style="animation-delay:0.1s;">
+    <view class="tabs__nav">
+      <view class="tabs__item {{activeTab === 'health' ? 'active' : ''}}" bindtap="switchTab" data-tab="health">💊 健康</view>
+      <view class="tabs__item {{activeTab === 'feeding' ? 'active' : ''}}" bindtap="switchTab" data-tab="feeding">🍽️ 喂食</view>
+      <view class="tabs__item {{activeTab === 'water' ? 'active' : ''}}" bindtap="switchTab" data-tab="water">💧 饮水</view>
+      <view class="tabs__item {{activeTab === 'training' ? 'active' : ''}}" bindtap="switchTab" data-tab="training">🎯 训练</view>
+      <view class="tabs__item {{activeTab === 'timeline' ? 'active' : ''}}" bindtap="switchTab" data-tab="timeline">⏱️ 时间线</view>
+    </view>
+
+    <!-- 健康 -->
+    <view wx:if="{{activeTab === 'health'}}">
+      <view class="reminder-banner" wx:if="{{healthReminders.length > 0}}">
+        <text>⚠️ {{healthReminders.length}} 条即将到期提醒</text>
+      </view>
+      <health-record-card wx:for="{{healthRecords}}" wx:key="id" record="{{item}}" />
+      <view class="empty-hint" wx:if="{{healthRecords.length === 0}}">暂无健康记录</view>
+    </view>
+
+    <!-- 喂食 -->
+    <view wx:if="{{activeTab === 'feeding'}}">
+      <view class="feeding-mini-list">
+        <view class="feeding-mini" wx:for="{{feedingRecords}}" wx:key="id">
+          <view class="feeding-mini__left">
+            <text class="feeding-mini__time">{{item.time}}</text>
+            <text class="feeding-mini__date">{{item.date}}</text>
+          </view>
+          <view class="feeding-mini__center">
+            <text class="feeding-mini__name">{{item.foodName}}</text>
+            <text class="feeding-mini__meta">{{item.foodType}} · {{item.grams}}g</text>
+          </view>
+          <view class="feeding-mini__right">
+            <text class="feeding-mini__appetite {{item.appetite === '正常' || item.appetite === '狼吞虎咽' ? 'good' : item.appetite === '不吃' ? 'bad' : 'warn'}}">{{item.appetite}}</text>
+            <text class="feeding-mini__finished">{{item.finished ? '✅' : '❌'}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="empty-hint" wx:if="{{feedingRecords.length === 0}}">暂无喂食记录</view>
+      <view class="more-link" wx:if="{{feedingRecords.length > 0}}" bindtap="goPage" data-url="/pages/feeding/feeding">
+        <text>查看完整喂食管理 ›</text>
+      </view>
+    </view>
+
+    <!-- 饮水 -->
+    <view wx:if="{{activeTab === 'water'}}">
+      <view class="water-mini-list">
+        <view class="water-mini" wx:for="{{waterRecords}}" wx:key="date">
+          <text class="water-mini__date">{{item.date}}</text>
+          <view class="water-mini__bar-wrap">
+            <view class="water-mini__bar" style="width: {{item.intake > 0 ? (item.intake / 400 * 100 > 100 ? 100 : item.intake / 400 * 100) : 0}}%; background: {{item.hasAnomaly ? '#FAAD14' : '#7EC8E3'}};"></view>
+          </view>
+          <text class="water-mini__amount">{{item.intake}}ml</text>
+          <text class="water-mini__changes">{{item.changeCount}}次换水</text>
+        </view>
+      </view>
+      <view class="empty-hint" wx:if="{{waterRecords.length === 0}}">暂无饮水记录</view>
+      <view class="more-link" wx:if="{{waterRecords.length > 0}}" bindtap="goPage" data-url="/pages/water/water">
+        <text>查看完整饮水管理 ›</text>
+      </view>
+    </view>
+
+    <!-- 训练 -->
+    <view wx:if="{{activeTab === 'training'}}">
+      <view class="skill-summary" wx:if="{{skills.length > 0}}">
+        <view class="skill-pill" wx:for="{{skills}}" wx:key="command">
+          <text class="skill-pill__name">{{item.command}}</text>
+          <text class="skill-pill__rate">{{item.successRate}}%</text>
+        </view>
+      </view>
+      <training-card wx:for="{{trainingRecords}}" wx:key="id" record="{{item}}" />
+      <view class="empty-hint" wx:if="{{trainingRecords.length === 0}}">暂无训练记录</view>
+    </view>
+
+    <!-- 时间线 -->
+    <view wx:if="{{activeTab === 'timeline'}}">
+      <view class="activity-timeline">
+        <view class="activity-item" wx:for="{{timeline}}" wx:key="id">
+          <view class="activity-item__dot" style="background: {{item.color}};"></view>
+          <view class="activity-item__line" wx:if="{{index < timeline.length - 1}}"></view>
+          <view class="activity-item__content">
+            <text class="activity-item__icon">{{item.icon}}</text>
+            <view class="activity-item__info">
+              <text class="activity-item__title">{{item.title}}</text>
+              <text class="activity-item__date">{{item.date}} {{item.time || ''}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="empty-hint" wx:if="{{timeline.length === 0}}">暂无活动记录</view>
+    </view>
+  </view>
+</view>

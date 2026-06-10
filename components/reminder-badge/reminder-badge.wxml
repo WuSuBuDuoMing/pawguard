@@ -1,0 +1,7 @@
+<view class="reminder {{type}} {{isDarkMode ? 'dark' : ''}}" wx:if="{{count > 0}}">
+  <text class="reminder__icon">{{icon}}</text>
+  <text class="reminder__text">{{text}}</text>
+  <view class="reminder__badge">
+    <text>{{count > 99 ? '99+' : count}}</text>
+  </view>
+</view>

@@ -1,0 +1,72 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">📋 日常照护</view>
+  <!-- 宠物选择 -->
+  <view class="pet-picker-wrap fade-in" style="animation-delay:0.05s;">
+    <picker mode="selector" range="{{petNames}}" value="{{petIndex}}" bindchange="onPetChange">
+      <view class="pet-picker">
+        <text class="pet-picker__icon">{{currentPetSpecies === 'dog' ? '🐶' : currentPetSpecies === 'cat' ? '🐱' : currentPetSpecies === 'rabbit' ? '🐰' : currentPetSpecies === 'hamster' ? '🐹' : currentPetSpecies === 'bird' ? '🐦' : currentPetSpecies === 'reptile' ? '🦎' : '🐾'}}</text>
+        <text class="pet-picker__name">{{currentPetName || '选择宠物'}}</text>
+        <text class="pet-picker__arrow">▾</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 周日历 -->
+  <view class="week-calendar fade-in" style="animation-delay:0.08s;">
+    <view class="week-calendar__day {{item.isToday ? 'today' : ''}} {{item.isPast ? 'past' : ''}}" wx:for="{{weekDays}}" wx:key="date" bindtap="onDaySelect" data-date="{{item.date}}">
+      <text class="week-calendar__label">{{item.label}}</text>
+      <text class="week-calendar__date">{{item.day}}</text>
+      <view class="week-calendar__dot {{item.rate >= 80 ? 'good' : item.rate >= 50 ? 'ok' : 'low'}}" wx:if="{{item.hasData}}"></view>
+    </view>
+  </view>
+
+  <!-- 庆祝动画 -->
+  <view class="celebrate {{showCelebrate ? 'show' : ''}}" catchtap>
+    <text class="celebrate__emoji">🎉</text>
+    <text class="celebrate__text">今日全部完成！</text>
+  </view>
+
+  <!-- 本周进度 -->
+  <view class="section card fade-in" style="animation-delay:0.1s;">
+    <view class="section__header"><text class="section__title">📊 本周完成率</text></view>
+    <view class="week-overview">
+      <view class="week-overview__ring">
+        <progress-ring percent="{{weeklyRate}}" size="130" color="#FF9F5A" label="本周" />
+      </view>
+      <view class="week-overview__days">
+        <view class="day-col" wx:for="{{weekStats}}" wx:key="date">
+          <view class="day-col__bar-wrap">
+            <view class="day-col__bar" style="height: {{item.rate}}%; background: {{item.rate >= 80 ? 'linear-gradient(180deg,#52C41A,#73d13d)' : item.rate >= 50 ? 'linear-gradient(180deg,#FAAD14,#ffc53d)' : 'linear-gradient(180deg,#FF4D4F,#ff7875)'}};"></view>
+          </view>
+          <text class="day-col__label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI建议 -->
+  <view class="ai-card fade-in" style="animation-delay:0.15s;" wx:if="{{aiSuggestion}}">
+    <view class="ai-card__icon-wrap"><text>🤖</text></view>
+    <text class="ai-card__text">{{aiSuggestion}}</text>
+  </view>
+
+  <!-- 今日任务 -->
+  <view class="section fade-in" style="animation-delay:0.2s;">
+    <view class="section__header">
+      <text class="section__title">✅ 今日任务</text>
+      <text class="section__count">{{careCompleted}}/{{careTotal}}</text>
+    </view>
+    <view class="task-list">
+      <care-task-card wx:for="{{todayCares}}" wx:key="id" task="{{item}}" icon="{{item.icon}}" bindcomplete="onComplete" />
+    </view>
+    <empty-state wx:if="{{todayCares.length === 0}}" icon="🎉" title="今天的任务都完成了！" desc="休息一下，和你的毛孩子玩玩吧~" />
+  </view>
+
+  <!-- 今日完成统计 -->
+  <view class="section card fade-in" style="animation-delay:0.25s;" wx:if="{{careCompleted > 0}}">
+    <view class="done-summary">
+      <text class="done-summary__icon">✨</text>
+      <text class="done-summary__text">今日已完成 {{careCompleted}} 项照护任务，你是最棒的铲屎官！</text>
+    </view>
+  </view>
+</view>

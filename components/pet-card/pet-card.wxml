@@ -1,0 +1,27 @@
+<view class="pet-card {{isDarkMode ? 'dark' : ''}} {{selected ? 'selected' : ''}}" bindtap="onTap">
+  <view class="pet-card__avatar">
+    <view class="pet-card__avatar-bg {{pet.species}}"></view>
+    <text wx:if="{{!pet.avatar}}" class="pet-card__avatar-emoji">{{pet.species === 'dog' ? '🐶' : pet.species === 'cat' ? '🐱' : pet.species === 'rabbit' ? '🐰' : pet.species === 'hamster' ? '🐹' : pet.species === 'bird' ? '🐦' : pet.species === 'reptile' ? '🦎' : '🐾'}}</text>
+    <image wx:else src="{{pet.avatar}}" mode="aspectFill" class="pet-card__avatar-img" />
+  </view>
+  <view class="pet-card__info">
+    <view class="pet-card__header">
+      <text class="pet-card__name">{{pet.name}}</text>
+      <text class="pet-card__gender {{pet.gender}}">{{pet.gender === 'male' ? '♂' : '♀'}}</text>
+      <text class="pet-card__age-badge" wx:if="{{age}}">{{age}}</text>
+    </view>
+    <text class="pet-card__breed">{{pet.breed}}</text>
+    <view class="pet-card__stats">
+      <view class="pet-card__stat">
+        <text class="pet-card__stat-icon">⚖️</text>
+        <text class="pet-card__stat-val">{{pet.weight}}kg</text>
+        <text class="pet-card__stat-trend {{trendDir}}" wx:if="{{trendDir}}">{{trendDir === 'up' ? '↑' : trendDir === 'down' ? '↓' : '→'}}</text>
+      </view>
+    </view>
+    <view class="pet-card__tags" wx:if="{{pet.personality && pet.personality.length}}">
+      <text class="tag tag-orange" wx:for="{{pet.personality}}" wx:key="*this" wx:if="{{index < 3}}">{{item}}</text>
+    </view>
+    <text class="pet-card__notes" wx:if="{{pet.notes && showNotes}}">📝 {{pet.notes}}</text>
+  </view>
+  <view class="pet-card__arrow" wx:if="{{showArrow}}"><text>›</text></view>
+</view>

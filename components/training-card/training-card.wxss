@@ -1,0 +1,13 @@
+.training-card {
+  background: var(--card-bg, #FFF); border-radius: 20rpx;
+  padding: 24rpx; margin-bottom: 16rpx; box-shadow: var(--shadow);
+}
+.training-card.failed { border-left: 6rpx solid #FAAD14; }
+.training-card__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.training-card__command { font-size: 30rpx; font-weight: 600; color: var(--text-primary, #333); }
+.training-card__result { padding: 4rpx 16rpx; border-radius: 16rpx; font-size: 22rpx; }
+.training-card__result.success { background: rgba(82,196,26,0.12); color: #52C41A; }
+.training-card__result.fail { background: rgba(250,173,20,0.12); color: #FAAD14; }
+.training-card__meta { display: flex; gap: 24rpx; font-size: 22rpx; color: var(--text-secondary, #888); margin-bottom: 8rpx; }
+.training-card__reward { font-size: 22rpx; color: var(--text-secondary, #888); }
+.training-card__notes { font-size: 24rpx; color: var(--text-secondary, #888); margin-top: 8rpx; display: block; }

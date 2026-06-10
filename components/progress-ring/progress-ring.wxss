@@ -1,0 +1,5 @@
+.ring-container { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.ring-canvas { }
+.ring-text { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-value { font-size: 32rpx; font-weight: 700; }
+.ring-label { font-size: 20rpx; color: var(--text-secondary, #888); margin-top: 4rpx; }

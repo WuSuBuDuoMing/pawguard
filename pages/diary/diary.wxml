@@ -1,0 +1,106 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">📝 成长日记</view>
+  <picker mode="selector" range="{{petNames}}" value="{{petIndex}}" bindchange="onPetChange">
+    <view class="pet-picker fade-in" style="animation-delay:0.05s;">
+      <text>{{currentPetSpecies === 'dog' ? '🐶' : currentPetSpecies === 'cat' ? '🐱' : currentPetSpecies === 'rabbit' ? '🐰' : currentPetSpecies === 'hamster' ? '🐹' : currentPetSpecies === 'bird' ? '🐦' : currentPetSpecies === 'reptile' ? '🦎' : '🐾'}}</text>
+      <text>{{currentPetName}} ▾</text>
+    </view>
+  </picker>
+
+  <!-- 月度总结 -->
+  <view class="summary-card fade-in" style="animation-delay:0.08s;" wx:if="{{monthlySummary}}">
+    <view class="summary-card__header">
+      <text class="summary-card__title">📅 {{month}}月成长总结</text>
+      <text class="summary-card__count">{{monthlySummary.count}} 篇</text>
+    </view>
+    <text class="summary-card__text">{{monthlySummary.summary}}</text>
+    <view class="summary-card__moods" wx:if="{{monthlySummary.moods.length > 0}}">
+      <text class="mood-dot" wx:for="{{monthlySummary.moods}}" wx:key="*this" wx:if="{{index < 8}}">
+        {{item === 'happy' ? '😊' : item === 'excited' ? '🤩' : item === 'scared' ? '😨' : item === 'angry' ? '😠' : item === 'tired' ? '😴' : item === 'clingy' ? '🥰' : '📝'}}
+      </text>
+    </view>
+  </view>
+
+  <!-- 心情日历 -->
+  <view class="mood-calendar fade-in" style="animation-delay:0.1s;">
+    <view class="mood-calendar__header">
+      <text class="mood-calendar__title">本月心情</text>
+    </view>
+    <view class="mood-calendar__grid">
+      <view class="mood-calendar__day {{item.hasDiary ? 'has-entry' : ''}}" wx:for="{{calendarDays}}" wx:key="date">
+        <text class="mood-calendar__date">{{item.day}}</text>
+        <text class="mood-calendar__emoji" wx:if="{{item.mood}}">{{item.moodEmoji}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 日记列表 -->
+  <view class="diary-list">
+    <diary-card wx:for="{{diaries}}" wx:key="id" diary="{{item}}" />
+  </view>
+  <empty-state wx:if="{{diaries.length === 0}}" icon="📝" title="还没有日记" desc="记录宠物的成长瞬间吧" btnText="写日记" bindaction="onWrite" />
+
+  <!-- AI 生成按钮 -->
+  <view class="ai-generate fade-in" style="animation-delay:0.15s;" wx:if="{{diaries.length > 0}}" bindtap="onAIGenerate">
+    <view class="ai-generate__icon"><text>🤖</text></view>
+    <view class="ai-generate__info">
+      <text class="ai-generate__title">AI 生成日记文案</text>
+      <text class="ai-generate__desc">让 AI 帮你写一段温馨的宠物日记</text>
+    </view>
+    <text class="ai-generate__arrow">›</text>
+  </view>
+
+  <!-- AI 结果弹窗 -->
+  <view class="modal-mask" wx:if="{{showAIResult}}" bindtap="hideAIResult">
+    <view class="ai-modal {{isDarkMode ? 'dark' : ''}}" catchtap>
+      <view class="ai-modal__header">
+        <text class="ai-modal__badge">🤖 AI 创作</text>
+        <text class="ai-modal__close" bindtap="hideAIResult">✕</text>
+      </view>
+      <text class="ai-modal__title">{{aiResult.title}}</text>
+      <text class="ai-modal__content">{{aiResult.content}}</text>
+      <view class="ai-modal__mood" wx:if="{{aiResult.mood}}">
+        <text>心情：</text>
+        <text>{{aiResult.mood === 'happy' ? '😊 开心' : aiResult.mood === 'excited' ? '🤩 兴奋' : aiResult.mood === 'clingy' ? '🥰 粘人' : '📝 记录'}}</text>
+      </view>
+      <view class="ai-modal__actions">
+        <button class="btn-secondary" bindtap="onAICopy">复制文案</button>
+        <button class="btn-primary" bindtap="onAISave">保存为日记</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 写日记弹窗 -->
+  <view class="modal-mask" wx:if="{{showWriteModal}}" bindtap="hideWrite">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">📝 写日记</text>
+        <view class="modal-close" bindtap="hideWrite"><text>✕</text></view>
+      </view>
+      <scroll-view scroll-y class="modal-body">
+        <view class="form-group">
+          <text class="form-label">心情</text>
+          <picker mode="selector" range="{{moodOptions}}" range-key="name" bindchange="onMoodChange">
+            <view class="form-picker">{{form.mood === 'happy' ? '😊 开心' : form.mood === 'excited' ? '🤩 兴奋' : form.mood === 'tired' ? '😴 疲惫' : form.mood === 'clingy' ? '🥰 粘人' : form.mood === 'scared' ? '😨 害怕' : '😠 生气'}} ▾</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="form-label">标题 *</text>
+          <input class="form-input" value="{{form.title}}" placeholder="给今天起个标题" bindinput="onFormInput" data-field="title" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">内容 *</text>
+          <textarea class="form-textarea diary-textarea" value="{{form.content}}" placeholder="记录今天和宠物的故事..." bindinput="onFormInput" data-field="content" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">标签（逗号分隔）</text>
+          <input class="form-input" value="{{form.tags}}" placeholder="如：散步,新玩具" bindinput="onFormInput" data-field="tags" />
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="hideWrite">取消</view>
+        <view class="modal-btn confirm" bindtap="onSaveDiary">保存</view>
+      </view>
+    </view>
+  </view>
+</view>

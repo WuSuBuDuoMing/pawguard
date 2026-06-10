@@ -1,0 +1,48 @@
+.pet-card {
+  display: flex; align-items: center;
+  background: var(--card-bg, #FFFFFF); border-radius: 28rpx;
+  padding: 28rpx; margin-bottom: 20rpx;
+  box-shadow: var(--shadow, 0 2rpx 12rpx rgba(0,0,0,0.08));
+  transition: all 0.3s ease; border: 2rpx solid transparent;
+}
+.pet-card:active { transform: scale(0.98); }
+.pet-card.selected { border-color: #FF9F5A; box-shadow: 0 6rpx 24rpx rgba(255,159,90,0.2); }
+
+.pet-card__avatar {
+  width: 100rpx; height: 100rpx; border-radius: 50%;
+  overflow: hidden; flex-shrink: 0; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.pet-card__avatar-bg {
+  position: absolute; inset: 0;
+}
+.pet-card__avatar-bg.cat { background: linear-gradient(135deg, #FFB87C, #FF9F5A); }
+.pet-card__avatar-bg.dog { background: linear-gradient(135deg, #7EC8E3, #5BA4C9); }
+.pet-card__avatar-img { width: 100%; height: 100%; position: relative; z-index: 1; }
+.pet-card__avatar-emoji { font-size: 48rpx; position: relative; z-index: 1; }
+
+.pet-card__info { flex: 1; margin-left: 24rpx; }
+.pet-card__header { display: flex; align-items: center; margin-bottom: 6rpx; gap: 8rpx; }
+.pet-card__name { font-size: 32rpx; font-weight: 600; color: var(--text-primary, #333); }
+.pet-card__gender { font-size: 22rpx; width: 32rpx; height: 32rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.pet-card__gender.male { background: rgba(126,200,227,0.15); color: #7EC8E3; }
+.pet-card__gender.female { background: rgba(255,181,194,0.15); color: #FFB5C2; }
+.pet-card__age-badge {
+  font-size: 20rpx; padding: 2rpx 12rpx; border-radius: 12rpx;
+  background: rgba(255,159,90,0.1); color: #FF9F5A;
+}
+
+.pet-card__breed { font-size: 24rpx; color: var(--text-secondary, #888); margin-bottom: 8rpx; }
+
+.pet-card__stats { display: flex; gap: 20rpx; margin-bottom: 10rpx; }
+.pet-card__stat { display: flex; align-items: center; gap: 6rpx; font-size: 22rpx; }
+.pet-card__stat-icon { font-size: 20rpx; }
+.pet-card__stat-val { color: var(--text-primary); font-weight: 500; }
+.pet-card__stat-trend { font-size: 20rpx; font-weight: 600; }
+.pet-card__stat-trend.up { color: #FF4D4F; }
+.pet-card__stat-trend.down { color: #52C41A; }
+.pet-card__stat-trend.flat { color: var(--text-secondary); }
+
+.pet-card__tags { display: flex; flex-wrap: wrap; }
+.pet-card__notes { font-size: 22rpx; color: var(--text-secondary); margin-top: 8rpx; display: block; opacity: 0.8; }
+.pet-card__arrow { font-size: 36rpx; color: var(--text-secondary, #888); margin-left: 12rpx; }

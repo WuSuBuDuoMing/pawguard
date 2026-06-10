@@ -1,0 +1,140 @@
+<view class="page {{themeClass}}">
+  <!-- 用户头像区 -->
+  <view class="profile-header fade-in">
+    <view class="profile-header__bg"></view>
+    <view class="profile-header__content">
+      <view class="profile-avatar">
+        <text>🐾</text>
+      </view>
+      <view class="profile-info">
+        <text class="profile-name">铲屎官</text>
+        <text class="profile-desc">共 {{petCount}} 只毛孩子 · {{totalDays}} 天</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="stats-grid fade-in" style="animation-delay:0.05s;">
+    <view class="stats-item" bindtap="goPage" data-url="/pages/pets/pets">
+      <text class="stats-num">{{petCount}}</text>
+      <text class="stats-label">宠物</text>
+    </view>
+    <view class="stats-item" bindtap="goPage" data-url="/pages/diary/diary">
+      <text class="stats-num">{{diaryCount}}</text>
+      <text class="stats-label">日记</text>
+    </view>
+    <view class="stats-item" bindtap="goPage" data-url="/pages/album/album">
+      <text class="stats-num">{{photoCount}}</text>
+      <text class="stats-label">照片</text>
+    </view>
+    <view class="stats-item">
+      <text class="stats-num">{{careCount}}</text>
+      <text class="stats-label">打卡</text>
+    </view>
+  </view>
+
+  <!-- 成就徽章 -->
+  <view class="section card fade-in" style="animation-delay:0.1s;">
+    <view class="section__header">
+      <text class="section__title">🏆 成就徽章</text>
+    </view>
+    <view class="badges">
+      <view class="badge {{item.unlocked ? 'unlocked' : 'locked'}}" wx:for="{{badges}}" wx:key="id">
+        <text class="badge__icon">{{item.icon}}</text>
+        <text class="badge__name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 菜单列表 -->
+  <view class="menu-group fade-in" style="animation-delay:0.15s;">
+    <view class="menu-item" bindtap="goPage" data-url="/pages/pets/pets">
+      <text class="menu-item__icon">🐱</text>
+      <text class="menu-item__name">宠物管理</text>
+      <text class="menu-item__extra">{{petCount}}只</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goPage" data-url="/pages/ai-chat/ai-chat">
+      <text class="menu-item__icon">🤖</text>
+      <text class="menu-item__name">AI 宠物助手</text>
+      <text class="menu-item__extra">智能问答</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goPage" data-url="/pages/feeding/feeding">
+      <text class="menu-item__icon">🍽️</text>
+      <text class="menu-item__name">喂食管理</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goPage" data-url="/pages/water/water">
+      <text class="menu-item__icon">💧</text>
+      <text class="menu-item__name">饮水管理</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goPage" data-url="/pages/health/health">
+      <text class="menu-item__icon">💊</text>
+      <text class="menu-item__name">健康记录</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goPage" data-url="/pages/training/training">
+      <text class="menu-item__icon">🎯</text>
+      <text class="menu-item__name">训练打卡</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goPage" data-url="/pages/inventory/inventory">
+      <text class="menu-item__icon">📦</text>
+      <text class="menu-item__name">用品库存</text>
+      <view class="menu-item__badge" wx:if="{{lowStockCount > 0}}">{{lowStockCount}}</view>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goPage" data-url="/pages/expense/expense">
+      <text class="menu-item__icon">💰</text>
+      <text class="menu-item__name">宠物账本</text>
+      <text class="menu-item__extra">¥{{monthlyExpense}}</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goPage" data-url="/pages/stats/stats">
+      <text class="menu-item__icon">📊</text>
+      <text class="menu-item__name">数据统计</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goPage" data-url="/pages/reminders/reminders">
+      <text class="menu-item__icon">🔔</text>
+      <text class="menu-item__name">提醒中心</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+  </view>
+
+  <view class="menu-group fade-in" style="animation-delay:0.2s;">
+    <view class="menu-item" bindtap="toggleTheme">
+      <text class="menu-item__icon">{{isDarkMode ? '☀️' : '🌙'}}</text>
+      <text class="menu-item__name">{{isDarkMode ? '浅色模式' : '深色模式'}}</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="onExportData">
+      <text class="menu-item__icon">📤</text>
+      <text class="menu-item__name">导出数据</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="onHealthCheck">
+      <text class="menu-item__icon">🔍</text>
+      <text class="menu-item__name">数据健康检查</text>
+      <text class="menu-item__extra" wx:if="{{dataScore > 0}}" style="color: {{dataScore >= 80 ? '#52C41A' : dataScore >= 60 ? '#FAAD14' : '#FF4D4F'}};">{{dataScore}}分</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="onClearCache">
+      <text class="menu-item__icon">🗑️</text>
+      <text class="menu-item__name">清除缓存</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="onAbout">
+      <text class="menu-item__icon">ℹ️</text>
+      <text class="menu-item__name">关于</text>
+      <text class="menu-item__extra">v1.5.0</text>
+      <text class="menu-item__arrow">›</text>
+    </view>
+  </view>
+
+  <view class="footer fade-in" style="animation-delay:0.25s;">
+    <text class="footer__text">🐾 AI 宠物管家 · 让养宠更轻松</text>
+  </view>
+</view>

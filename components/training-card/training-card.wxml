@@ -1,0 +1,16 @@
+<view class="training-card {{record.success ? '' : 'failed'}} {{isDarkMode ? 'dark' : ''}}" bindtap="onTap">
+  <view class="training-card__header">
+    <text class="training-card__command">{{record.command}}</text>
+    <view class="training-card__result {{record.success ? 'success' : 'fail'}}">
+      <text>{{record.success ? '✓ 成功' : '✗ 未完成'}}</text>
+    </view>
+  </view>
+  <view class="training-card__meta">
+    <text class="training-card__duration">⏱️ {{record.duration}}分钟</text>
+    <text class="training-card__date">{{record.date}}</text>
+  </view>
+  <view class="training-card__reward" wx:if="{{record.reward}}">
+    <text>🎁 奖励：{{record.reward}}</text>
+  </view>
+  <text class="training-card__notes" wx:if="{{record.notes}}">{{record.notes}}</text>
+</view>

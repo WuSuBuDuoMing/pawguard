@@ -1,0 +1,21 @@
+<view class="care-task {{task.completed ? 'completed' : ''}} {{isDarkMode ? 'dark' : ''}}" bindtap="onTap">
+  <view class="care-task__icon" style="background: {{task.completed ? 'rgba(82,196,26,0.12)' : 'rgba(255,159,90,0.12)'}};">
+    <text class="care-task__emoji">{{icon}}</text>
+  </view>
+  <view class="care-task__info">
+    <text class="care-task__name">{{task.type === 'feeding' ? '喂食' : task.type === 'water' ? '饮水' : task.type === 'walking' ? '遛狗' : task.type === 'playing' ? '玩耍' : task.type === 'bathing' ? '洗澡' : task.type === 'grooming' ? '梳毛' : task.type === 'litter_box' ? '清理猫砂盆' : task.type === 'cage_clean' ? '清洁笼子' : task.type === 'nail_trimming' ? '剪指甲' : task.type}}</text>
+    <view class="care-task__meta">
+      <text class="care-task__time">🕐 {{task.scheduledTime}}</text>
+      <text class="care-task__notes" wx:if="{{task.notes}}">· {{task.notes}}</text>
+    </view>
+  </view>
+  <view class="care-task__action">
+    <view class="care-task__check {{task.completed ? 'checked' : ''}}" catchtap="onComplete">
+      <view class="care-task__check-inner">
+        <text wx:if="{{task.completed}}" class="care-task__check-icon">✓</text>
+      </view>
+      <view class="care-task__check-ring {{task.completed ? 'done' : ''}}"></view>
+    </view>
+    <text class="care-task__status-text">{{task.completed ? '已完成' : '待完成'}}</text>
+  </view>
+</view>

@@ -1,0 +1,43 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">📷 宠物相册</view>
+  <picker mode="selector" range="{{petNames}}" value="{{petIndex}}" bindchange="onPetChange">
+    <view class="pet-picker fade-in" style="animation-delay:0.05s;">
+      <text>{{currentPetSpecies === 'dog' ? '🐶' : currentPetSpecies === 'cat' ? '🐱' : currentPetSpecies === 'rabbit' ? '🐰' : currentPetSpecies === 'hamster' ? '🐹' : currentPetSpecies === 'bird' ? '🐦' : currentPetSpecies === 'reptile' ? '🦎' : '🐾'}}</text>
+      <text>{{currentPetName}} ▾</text>
+    </view>
+  </picker>
+
+  <!-- 统计 -->
+  <view class="stats-bar fade-in" style="animation-delay:0.08s;" wx:if="{{stats}}">
+    <text class="stats-bar__count">共 {{stats.total}} 张照片</text>
+    <view class="stats-bar__tags">
+      <text class="tag tag-orange {{activeTag === item.tag ? 'selected' : ''}}" wx:for="{{stats.topTags}}" wx:key="tag" wx:if="{{index < 5}}" bindtap="onTagFilter" data-tag="{{item.tag}}">{{item.tag}}({{item.count}})</text>
+      <text class="tag tag-gray" wx:if="{{activeTag}}" bindtap="onTagFilter" data-tag="">清除筛选</text>
+    </view>
+  </view>
+
+  <!-- 时间分组 -->
+  <view class="album-section" wx:for="{{groupedPhotos}}" wx:key="date" wx:for-item="group">
+    <view class="album-section__header fade-in" style="animation-delay:0.1s;">
+      <text class="album-section__date">{{group.dateLabel}}</text>
+      <text class="album-section__count">{{group.photos.length}} 张</text>
+    </view>
+    <album-grid photos="{{group.photos}}" showTitle="{{true}}" bindphotoTap="onPhotoTap" />
+  </view>
+
+  <empty-state wx:if="{{filteredPhotos.length === 0}}" icon="📷" title="还没有照片" desc="{{activeTag ? '该标签下暂无照片' : '快去记录宠物的可爱瞬间吧'}}" />
+
+  <!-- 照片详情弹窗 -->
+  <view class="photo-modal-mask" wx:if="{{showPhotoDetail}}" bindtap="hidePhotoDetail">
+    <view class="photo-modal" catchtap>
+      <image src="{{selectedPhoto.url}}" mode="aspectFit" class="photo-modal__img" />
+      <view class="photo-modal__info">
+        <text class="photo-modal__title">{{selectedPhoto.title}}</text>
+        <text class="photo-modal__date">{{selectedPhoto.date}}</text>
+        <view class="photo-modal__tags">
+          <text class="tag tag-orange" wx:for="{{selectedPhoto.tags}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

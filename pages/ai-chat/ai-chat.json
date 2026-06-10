@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "empty-state": "/components/empty-state/empty-state"
+  },
+  "navigationBarTitleText": "AI 宠物助手",
+  "enablePullDownRefresh": false
+}

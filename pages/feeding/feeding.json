@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "empty-state": "/components/empty-state/empty-state",
+    "mini-chart": "/components/mini-chart/mini-chart"
+  },
+  "navigationBarTitleText": "喂食管理",
+  "enablePullDownRefresh": true
+}

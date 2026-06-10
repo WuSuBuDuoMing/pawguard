@@ -1,0 +1,13 @@
+{
+  "navigationBarTitleText": "AI 宠物管家",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "backgroundColor": "#FFF8F0",
+  "usingComponents": {
+    "pet-card": "/components/pet-card/pet-card",
+    "care-task-card": "/components/care-task-card/care-task-card",
+    "reminder-badge": "/components/reminder-badge/reminder-badge",
+    "empty-state": "/components/empty-state/empty-state",
+    "loading-state": "/components/loading-state/loading-state"
+  }
+}

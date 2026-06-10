@@ -1,0 +1,1 @@
+{ "navigationBarTitleText": "成长日记", "usingComponents": { "diary-card": "/components/diary-card/diary-card", "empty-state": "/components/empty-state/empty-state" } }

@@ -1,0 +1,94 @@
+<view class="page {{themeClass}}">
+  <view class="page-title fade-in">💰 宠物账本</view>
+
+  <!-- 月度概览卡片 -->
+  <view class="overview-card fade-in" style="animation-delay:0.05s;">
+    <view class="overview-card__top">
+      <text class="overview-card__label">{{year}}年{{month}}月</text>
+      <view class="overview-card__nav">
+        <text class="overview-card__nav-btn" bindtap="prevMonth">‹</text>
+        <text class="overview-card__nav-btn" bindtap="nextMonth">›</text>
+      </view>
+    </view>
+    <text class="overview-card__amount">¥{{monthlyTotal}}</text>
+    <view class="overview-card__row">
+      <view class="overview-card__metric">
+        <text class="overview-card__metric-val">¥{{dailyAvg}}</text>
+        <text class="overview-card__metric-label">日均</text>
+      </view>
+      <view class="overview-card__metric">
+        <text class="overview-card__metric-val">{{recordCount}}</text>
+        <text class="overview-card__metric-label">笔数</text>
+      </view>
+      <view class="overview-card__metric">
+        <text class="overview-card__metric-val">¥{{yearlyEstimate}}</text>
+        <text class="overview-card__metric-label">年度估算</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预算追踪 -->
+  <view class="budget-card fade-in" style="animation-delay:0.08s;" wx:if="{{budgetStatus}}">
+    <view class="budget-card__header">
+      <text class="budget-card__title">🎯 月度预算</text>
+      <text class="budget-card__amount" bindtap="onEditBudget">¥{{budgetStatus.budget}} ✏️</text>
+    </view>
+    <view class="budget-card__bar-wrap">
+      <view class="budget-card__bar" style="width: {{budgetStatus.percentage > 100 ? 100 : budgetStatus.percentage}}%; background: {{budgetStatus.status === 'over' ? '#FF4D4F' : budgetStatus.status === 'warning' ? '#FAAD14' : '#52C41A'}};"></view>
+    </view>
+    <view class="budget-card__info">
+      <text>已花 ¥{{budgetStatus.spent}} ({{budgetStatus.percentage}}%)</text>
+      <text style="color: {{budgetStatus.remaining >= 0 ? '#52C41A' : '#FF4D4F'}};">{{budgetStatus.remaining >= 0 ? '剩余' : '超支'}} ¥{{budgetStatus.remaining < 0 ? -budgetStatus.remaining : budgetStatus.remaining}}</text>
+    </view>
+    <view class="budget-card__tip" wx:if="{{budgetStatus.remaining > 0 && budgetStatus.daysLeft > 0}}">
+      <text>💡 剩余 {{budgetStatus.daysLeft}} 天，日均可花 ¥{{budgetStatus.dailyBudget}}</text>
+    </view>
+    <view class="budget-card__tip warning" wx:if="{{budgetStatus.status === 'over'}}">
+      <text>⚠️ 已超出本月预算！建议减少非必要支出</text>
+    </view>
+  </view>
+
+  <!-- 分类统计柱状图 -->
+  <view class="section card fade-in" style="animation-delay:0.1s;">
+    <view class="section__header"><text class="section__title">📊 分类统计</text></view>
+    <view class="bar-chart">
+      <view class="bar-chart__row" wx:for="{{categories}}" wx:key="category">
+        <text class="bar-chart__label">{{item.category}}</text>
+        <view class="bar-chart__bar-wrap">
+          <view class="bar-chart__bar" style="width: {{item.percentage}}%; background: {{barColors[index % barColors.length]}};"></view>
+        </view>
+        <view class="bar-chart__right">
+          <text class="bar-chart__amount">¥{{item.amount}}</text>
+          <text class="bar-chart__pct">{{item.percentage}}%</text>
+        </view>
+      </view>
+      <view class="bar-chart__empty" wx:if="{{categories.length === 0}}">
+        <text>本月暂无支出记录</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 多宠分摊 -->
+  <view class="section card fade-in" style="animation-delay:0.15s;" wx:if="{{petBreakdown.length > 1}}">
+    <view class="section__header"><text class="section__title">🐾 多宠分摊</text></view>
+    <view class="pet-breakdown">
+      <view class="pet-breakdown__item" wx:for="{{petBreakdown}}" wx:key="petId">
+        <text class="pet-breakdown__icon">{{item.species === 'dog' ? '🐶' : item.species === 'cat' ? '🐱' : item.species === 'rabbit' ? '🐰' : item.species === 'hamster' ? '🐹' : item.species === 'bird' ? '🐦' : item.species === 'reptile' ? '🦎' : '🐾'}}</text>
+        <text class="pet-breakdown__name">{{item.name}}</text>
+        <view class="pet-breakdown__bar-wrap">
+          <view class="pet-breakdown__bar" style="width: {{item.percentage}}%;"></view>
+        </view>
+        <text class="pet-breakdown__amount">¥{{item.amount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 支出记录 -->
+  <view class="section fade-in" style="animation-delay:0.2s;">
+    <view class="section__header">
+      <text class="section__title">📋 支出明细</text>
+    </view>
+    <expense-card wx:for="{{records}}" wx:key="id" record="{{item}}" />
+    <empty-state wx:if="{{records.length === 0}}" icon="💰" title="本月暂无记录" desc="点击右上角添加第一笔开销" />
+  </view>
+</view>
