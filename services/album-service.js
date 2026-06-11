@@ -72,6 +72,11 @@ function _initData() {
   }
 }
 
+/**
+ * 获取照片列表
+ * @param {string} [petId] - 可选宠物 ID 筛选
+ * @returns {Promise<Array>} 按日期降序的照片列表
+ */
 async function getPhotos(petId) {
   await _delay(150);
   _initData();
@@ -80,6 +85,11 @@ async function getPhotos(petId) {
   return all.filter(p => p.petId === petId).sort((a, b) => b.date.localeCompare(a.date));
 }
 
+/**
+ * 添加照片
+ * @param {Object} photo - 照片数据
+ * @returns {Promise<Object>}
+ */
 async function addPhoto(photo) {
   await _delay(200);
   const all = storage.get('album') || [];
@@ -89,6 +99,11 @@ async function addPhoto(photo) {
   return newPhoto;
 }
 
+/**
+ * 获取照片统计
+ * @param {string} [petId] - 可选宠物 ID 筛选
+ * @returns {Promise<{total: number, topTags: Array<{tag: string, count: number}>>}
+ */
 async function getPhotoStats(petId) {
   await _delay(100);
   const photos = await getPhotos(petId);

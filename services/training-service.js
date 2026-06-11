@@ -73,6 +73,11 @@ function _initData() {
   }
 }
 
+/**
+ * 获取指定宠物的训练记录
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Array>} 按日期降序的训练记录
+ */
 async function getTrainingRecords(petId) {
   await _delay(150);
   _initData();
@@ -80,6 +85,11 @@ async function getTrainingRecords(petId) {
   return all.filter(r => r.petId === petId).sort((a, b) => b.date.localeCompare(a.date));
 }
 
+/**
+ * 添加训练记录
+ * @param {Object} record - 训练数据
+ * @returns {Promise<Object>} 添加后的记录
+ */
 async function addTrainingRecord(record) {
   await _delay(200);
   const all = storage.get(STORAGE_KEYS.TRAINING_RECORDS) || [];
@@ -89,6 +99,11 @@ async function addTrainingRecord(record) {
   return newRecord;
 }
 
+/**
+ * 获取各科目的训练进度和徽章
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Object>} 按科目分组的进度数据，含 totalCount、successCount、successRate、badge
+ */
 async function getCommandProgress(petId) {
   await _delay(100);
   const records = await getTrainingRecords(petId);
@@ -116,6 +131,11 @@ async function getCommandProgress(petId) {
   return progress;
 }
 
+/**
+ * 获取本周训练报告
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<{totalSessions: number, successSessions: number, successRate: number, totalDuration: number, commands: string[]}>}
+ */
 async function getWeeklyReport(petId) {
   await _delay(200);
   const records = await getTrainingRecords(petId);
@@ -132,7 +152,11 @@ async function getWeeklyReport(petId) {
   };
 }
 
-/** 获取连续训练天数 */
+/**
+ * 获取连续训练天数
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<{streak: number, bestStreak: number, lastDate: string|null}>}
+ */
 async function getTrainingStreak(petId) {
   await _delay(100);
   const records = await getTrainingRecords(petId);
@@ -158,7 +182,11 @@ async function getTrainingStreak(petId) {
   return { streak, bestStreak: Math.max(streak, dates.length > 0 ? Math.min(dates.length, 30) : 0), lastDate: dates[0] || null };
 }
 
-/** 获取训练建议 */
+/**
+ * 获取 AI 训练建议
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<string>} 训练建议文本
+ */
 async function getTrainingSuggestion(petId) {
   await _delay(200);
   const progress = await getCommandProgress(petId);

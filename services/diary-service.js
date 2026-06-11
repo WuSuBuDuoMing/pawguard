@@ -36,6 +36,11 @@ function _initData() {
   }
 }
 
+/**
+ * 获取日记列表
+ * @param {string} [petId] - 可选宠物 ID 筛选
+ * @returns {Promise<Array>} 按日期降序的日记列表
+ */
 async function getDiaries(petId) {
   await _delay(150);
   _initData();
@@ -44,6 +49,11 @@ async function getDiaries(petId) {
   return all.filter(d => d.petId === petId).sort((a, b) => b.date.localeCompare(a.date));
 }
 
+/**
+ * 添加日记
+ * @param {Object} diary - 日记数据
+ * @returns {Promise<Object>}
+ */
 async function addDiary(diary) {
   await _delay(200);
   const all = storage.get('diaries') || [];
@@ -53,12 +63,24 @@ async function addDiary(diary) {
   return newDiary;
 }
 
+/**
+ * 根据 ID 获取日记
+ * @param {string} id - 日记 ID
+ * @returns {Promise<Object|null>}
+ */
 async function getDiaryById(id) {
   await _delay(100);
   const all = storage.get('diaries') || [];
   return all.find(d => d.id === id) || null;
 }
 
+/**
+ * 获取月度日记总结
+ * @param {string} petId - 宠物 ID
+ * @param {number} year - 年份
+ * @param {number} month - 月份
+ * @returns {Promise<{count: number, moodBreakdown: Object, moods: string[], tags: string[], summary: string}>}
+ */
 async function getMonthlySummary(petId, year, month) {
   await _delay(200);
   const diaries = await getDiaries(petId);
@@ -77,7 +99,11 @@ async function getMonthlySummary(petId, year, month) {
   };
 }
 
-/** AI 生成日记文案 mock */
+/**
+ * AI 生成日记文案
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<{title: string, content: string, mood: string}>}
+ */
 async function generateAIDiary(petId) {
   await _delay(500);
   const templates = [

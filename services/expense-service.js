@@ -77,6 +77,11 @@ function _initData() {
   }
 }
 
+/**
+ * 获取开销记录
+ * @param {string} [petId] - 可选宠物 ID 筛选
+ * @returns {Promise<Array>} 按日期降序的开销记录
+ */
 async function getExpenses(petId) {
   await _delay(150);
   _initData();
@@ -85,6 +90,11 @@ async function getExpenses(petId) {
   return all.filter(e => e.petId === petId).sort((a, b) => b.date.localeCompare(a.date));
 }
 
+/**
+ * 添加开销记录
+ * @param {Object} record - 开销数据
+ * @returns {Promise<Object>} 添加后的记录
+ */
 async function addExpense(record) {
   await _delay(200);
   const all = storage.get(STORAGE_KEYS.EXPENSE_RECORDS) || [];
@@ -94,6 +104,13 @@ async function addExpense(record) {
   return newRecord;
 }
 
+/**
+ * 获取月度消费总额
+ * @param {number} year - 年份
+ * @param {number} month - 月份 (1-12)
+ * @param {string} [petId] - 可选宠物 ID 筛选
+ * @returns {Promise<number>} 月度总额
+ */
 async function getMonthlyTotal(year, month, petId) {
   await _delay(100);
   _initData();
@@ -103,6 +120,13 @@ async function getMonthlyTotal(year, month, petId) {
   return all.filter(e => e.date.startsWith(monthStr)).reduce((sum, e) => sum + e.amount, 0);
 }
 
+/**
+ * 获取分类消费占比
+ * @param {number} year - 年份
+ * @param {number} month - 月份
+ * @param {string} [petId] - 可选宠物 ID 筛选
+ * @returns {Promise<Array<{category: string, amount: number, percentage: number}>>}
+ */
 async function getCategoryBreakdown(year, month, petId) {
   await _delay(100);
   _initData();
@@ -123,6 +147,12 @@ async function getCategoryBreakdown(year, month, petId) {
   })).sort((a, b) => b.amount - a.amount);
 }
 
+/**
+ * 获取各宠物消费占比
+ * @param {number} year - 年份
+ * @param {number} month - 月份
+ * @returns {Promise<Array<{petId: string, amount: number}>>}
+ */
 async function getPetBreakdown(year, month) {
   await _delay(100);
   const all = storage.get(STORAGE_KEYS.EXPENSE_RECORDS) || [];
@@ -136,6 +166,11 @@ async function getPetBreakdown(year, month) {
   return Object.entries(breakdown).map(([petId, amount]) => ({ petId, amount })).sort((a, b) => b.amount - a.amount);
 }
 
+/**
+ * 获取年度消费总额
+ * @param {number} year - 年份
+ * @returns {Promise<number>}
+ */
 async function getYearlyTotal(year) {
   await _delay(100);
   const all = storage.get(STORAGE_KEYS.EXPENSE_RECORDS) || [];
@@ -145,11 +180,20 @@ async function getYearlyTotal(year) {
 /** 月度预算设置 */
 const BUDGET_KEY = 'expense_budget';
 
+/**
+ * 获取月度预算设置
+ * @returns {Promise<{monthly: number, enabled: boolean}>}
+ */
 async function getBudget() {
   await _delay(50);
   return storage.get(BUDGET_KEY) || { monthly: 3000, enabled: true };
 }
 
+/**
+ * 设置月度预算
+ * @param {number} amount - 预算金额
+ * @returns {Promise<{monthly: number, enabled: boolean}>}
+ */
 async function setBudget(amount) {
   await _delay(100);
   const budget = { monthly: amount, enabled: true };
@@ -157,6 +201,10 @@ async function setBudget(amount) {
   return budget;
 }
 
+/**
+ * 获取预算执行状态
+ * @returns {Promise<{budget: number, spent: number, remaining: number, percentage: number, status: string, daysLeft: number, dailyBudget: number}|null>}
+ */
 async function getBudgetStatus() {
   await _delay(100);
   const budget = await getBudget();

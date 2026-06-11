@@ -70,6 +70,11 @@ function _initData() {
   }
 }
 
+/**
+ * 获取指定宠物的健康记录
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Array>} 按日期降序排列的健康记录数组
+ */
 async function getHealthRecords(petId) {
   await _delay(150);
   _initData();
@@ -77,6 +82,11 @@ async function getHealthRecords(petId) {
   return all.filter(r => r.petId === petId).sort((a, b) => b.date.localeCompare(a.date));
 }
 
+/**
+ * 添加健康记录
+ * @param {Object} record - 健康记录数据
+ * @returns {Promise<Object>} 添加后的记录（含 id 和 createdAt）
+ */
 async function addHealthRecord(record) {
   await _delay(200);
   const all = storage.get(STORAGE_KEYS.HEALTH_RECORDS) || [];
@@ -90,6 +100,11 @@ async function addHealthRecord(record) {
   return newRecord;
 }
 
+/**
+ * 获取健康记录汇总统计
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<{total: number, vaccines: number, dewormings: number, visits: number, medications: number, abnormals: number}>}
+ */
 async function getHealthSummary(petId) {
   await _delay(100);
   const records = await getHealthRecords(petId);
@@ -103,6 +118,11 @@ async function getHealthSummary(petId) {
   };
 }
 
+/**
+ * 获取即将到期的健康提醒
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Array>} 按 nextDate 升序排列的待提醒记录
+ */
 async function getUpcomingReminders(petId) {
   await _delay(100);
   _initData();
@@ -113,6 +133,11 @@ async function getUpcomingReminders(petId) {
     .sort((a, b) => a.nextDate.localeCompare(b.nextDate));
 }
 
+/**
+ * 删除健康记录
+ * @param {string} id - 记录 ID
+ * @returns {Promise<boolean>} 是否成功删除
+ */
 async function deleteHealthRecord(id) {
   await _delay(200);
   const all = storage.get(STORAGE_KEYS.HEALTH_RECORDS) || [];

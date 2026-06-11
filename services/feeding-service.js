@@ -104,7 +104,12 @@ function _initData() {
   }
 }
 
-/** 获取指定宠物的喂食记录 */
+/**
+ * 获取指定宠物的喂食记录
+ * @param {string} petId - 宠物 ID
+ * @param {string} [date] - 可选日期筛选 (YYYY-MM-DD)
+ * @returns {Promise<Array>} 按日期和时间排序的喂食记录
+ */
 async function getFeedingRecords(petId, date) {
   await _delay(150);
   _initData();
@@ -117,13 +122,21 @@ async function getFeedingRecords(petId, date) {
   });
 }
 
-/** 获取今日喂食记录 */
+/**
+ * 获取今日喂食记录
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Array>} 今日喂食记录
+ */
 async function getTodayFeedings(petId) {
   const today = new Date().toISOString().split('T')[0];
   return getFeedingRecords(petId, today);
 }
 
-/** 添加喂食记录 */
+/**
+ * 添加喂食记录
+ * @param {Object} record - 喂食数据
+ * @returns {Promise<Object>} 添加后的记录
+ */
 async function addFeedingRecord(record) {
   await _delay(200);
   const all = storage.get(STORAGE_KEYS.FEEDING_RECORDS || 'feedingRecords') || [];
@@ -137,7 +150,12 @@ async function addFeedingRecord(record) {
   return newRecord;
 }
 
-/** 获取喂食统计 */
+/**
+ * 获取喂食统计
+ * @param {string} petId - 宠物 ID
+ * @param {number} [days=7] - 统计天数
+ * @returns {Promise<Array<{date: string, count: number, totalGrams: number, normalCount: number, abnormalCount: number}>>}
+ */
 async function getFeedingStats(petId, days = 7) {
   await _delay(100);
   _initData();
@@ -164,7 +182,11 @@ async function getFeedingStats(petId, days = 7) {
   return stats;
 }
 
-/** 获取一周食物类型分布 */
+/**
+ * 获取一周食物类型分布
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Array<{type: string, grams: number}>>} 按克数降序的食物类型分布
+ */
 async function getFoodTypeDistribution(petId) {
   await _delay(100);
   const all = storage.get(STORAGE_KEYS.FEEDING_RECORDS || 'feedingRecords') || [];
@@ -183,12 +205,16 @@ async function getFoodTypeDistribution(petId) {
     .sort((a, b) => b.grams - a.grams);
 }
 
-/** 删除喂食记录 */
+/**
+ * 删除喂食记录
+ * @param {string} id - 记录 ID
+ * @returns {Promise<boolean>} 是否成功删除
+ */
 async function deleteFeedingRecord(id) {
   await _delay(150);
   const all = storage.get(STORAGE_KEYS.FEEDING_RECORDS || 'feedingRecords') || [];
   const filtered = all.filter(r => r.id !== id);
-  storage.set(STORAGE_KEYS.FEEDING_RECORDS || 'feedingRecords', all);
+  storage.set(STORAGE_KEYS.FEEDING_RECORDS || 'feedingRecords', filtered);
   return filtered.length < all.length;
 }
 

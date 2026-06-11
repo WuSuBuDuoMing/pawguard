@@ -116,7 +116,12 @@ function _initData() {
   }
 }
 
-/** 获取指定日期的照护任务 */
+/**
+ * 获取指定日期的照护任务
+ * @param {string} petId - 宠物 ID
+ * @param {string} date - 日期 (YYYY-MM-DD)
+ * @returns {Promise<Array>}
+ */
 async function getCareByDate(petId, date) {
   await _delay(100);
   _initData();
@@ -124,13 +129,21 @@ async function getCareByDate(petId, date) {
   return all.filter(r => r.petId === petId && r.date === date);
 }
 
-/** 获取今日照护任务 */
+/**
+ * 获取今日照护任务
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Array>}
+ */
 async function getTodayCares(petId) {
   const today = new Date().toISOString().split('T')[0];
   return getCareByDate(petId, today);
 }
 
-/** 完成照护打卡 */
+/**
+ * 完成照护打卡
+ * @param {string} careId - 照护记录 ID
+ * @returns {Promise<Object|null>} 更新后的记录，未找到返回 null
+ */
 async function completeCare(careId) {
   await _delay(150);
   const all = storage.get(STORAGE_KEYS.CARE_RECORDS) || [];
@@ -142,7 +155,12 @@ async function completeCare(careId) {
   return all[idx];
 }
 
-/** 获取照护统计 */
+/**
+ * 获取照护统计
+ * @param {string} petId - 宠物 ID
+ * @param {number} [days=14] - 统计天数
+ * @returns {Promise<Array<{date: string, total: number, completed: number, rate: number}>>}
+ */
 async function getCareStats(petId, days = 14) {
   await _delay(100);
   _initData();
@@ -166,7 +184,11 @@ async function getCareStats(petId, days = 14) {
   return stats;
 }
 
-/** 获取本周完成率 */
+/**
+ * 获取本周完成率
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<number>} 完成百分比 0-100
+ */
 async function getWeeklyRate(petId) {
   const stats = await getCareStats(petId, 7);
   const total = stats.reduce((s, d) => s + d.total, 0);
@@ -174,7 +196,11 @@ async function getWeeklyRate(petId) {
   return total > 0 ? Math.round((completed / total) * 100) : 0;
 }
 
-/** 获取 AI 照护建议 (mock) */
+/**
+ * 获取 AI 照护建议
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<string>} 建议文本
+ */
 async function getAISuggestion(petId) {
   await _delay(300);
   const suggestions = [

@@ -54,18 +54,32 @@ function _initData() {
   }
 }
 
+/**
+ * 获取全部库存列表
+ * @returns {Promise<Array>}
+ */
 async function getInventoryList() {
   await _delay(150);
   _initData();
   return storage.get(STORAGE_KEYS.INVENTORY_LIST) || [];
 }
 
+/**
+ * 按类型筛选库存
+ * @param {string} type - 物品类型
+ * @returns {Promise<Array>}
+ */
 async function getInventoryByType(type) {
   await _delay(100);
   const all = await getInventoryList();
   return all.filter(i => i.type === type);
 }
 
+/**
+ * 添加库存物品
+ * @param {Object} item - 物品数据
+ * @returns {Promise<Object>}
+ */
 async function addInventoryItem(item) {
   await _delay(200);
   const all = storage.get(STORAGE_KEYS.INVENTORY_LIST) || [];
@@ -75,6 +89,12 @@ async function addInventoryItem(item) {
   return newItem;
 }
 
+/**
+ * 更新库存物品
+ * @param {string} id - 物品 ID
+ * @param {Object} updates - 更新字段
+ * @returns {Promise<Object|null>}
+ */
 async function updateInventoryItem(id, updates) {
   await _delay(150);
   const all = storage.get(STORAGE_KEYS.INVENTORY_LIST) || [];
@@ -85,12 +105,20 @@ async function updateInventoryItem(id, updates) {
   return all[idx];
 }
 
+/**
+ * 获取低库存物品
+ * @returns {Promise<Array>} 当前库存低于补货阈值的物品
+ */
 async function getLowStockItems() {
   await _delay(100);
   const all = await getInventoryList();
   return all.filter(i => i.currentStock <= i.restockThreshold);
 }
 
+/**
+ * 生成购物清单
+ * @returns {Promise<Array<{id: string, name: string, brand: string, type: string, price: number, currentStock: number, suggestedQty: number}>>}
+ */
 async function getShoppingList() {
   await _delay(100);
   const lowItems = await getLowStockItems();

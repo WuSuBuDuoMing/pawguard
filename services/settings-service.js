@@ -88,7 +88,7 @@ async function resetSettings() {
 async function exportData() {
   await _delay(300);
   const data = {
-    version: '1.5.0',
+    version: '2.1.0',
     exportDate: new Date().toISOString(),
     pets: storage.get(STORAGE_KEYS.PET_LIST) || [],
     careRecords: storage.get(STORAGE_KEYS.CARE_RECORDS) || [],

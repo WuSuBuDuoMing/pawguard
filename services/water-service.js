@@ -90,7 +90,12 @@ function _initData() {
   }
 }
 
-/** 获取饮水记录 */
+/**
+ * 获取饮水记录
+ * @param {string} petId - 宠物 ID
+ * @param {string} [date] - 可选日期筛选
+ * @returns {Promise<Array>} 按日期和时间排序的饮水记录
+ */
 async function getWaterRecords(petId, date) {
   await _delay(150);
   _initData();
@@ -103,13 +108,21 @@ async function getWaterRecords(petId, date) {
   });
 }
 
-/** 获取今日饮水记录 */
+/**
+ * 获取今日饮水记录
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Array>}
+ */
 async function getTodayWater(petId) {
   const today = new Date().toISOString().split('T')[0];
   return getWaterRecords(petId, today);
 }
 
-/** 添加饮水/换水记录 */
+/**
+ * 添加饮水/换水记录
+ * @param {Object} record - 饮水数据
+ * @returns {Promise<Object>} 添加后的记录
+ */
 async function addWaterRecord(record) {
   await _delay(200);
   const all = storage.get(STORAGE_KEYS.WATER_RECORDS) || [];
@@ -123,7 +136,12 @@ async function addWaterRecord(record) {
   return newRecord;
 }
 
-/** 获取每日饮水量统计 */
+/**
+ * 获取每日饮水量统计
+ * @param {string} petId - 宠物 ID
+ * @param {number} [days=14] - 统计天数
+ * @returns {Promise<Array<{date: string, intake: number, changeCount: number, hasAnomaly: boolean}>>}
+ */
 async function getDailyIntake(petId, days = 14) {
   await _delay(100);
   _initData();
@@ -149,7 +167,11 @@ async function getDailyIntake(petId, days = 14) {
   return stats;
 }
 
-/** 检测饮水异常 */
+/**
+ * 检测饮水异常
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Array<{type: string, message: string, severity: string}>>} 异常列表
+ */
 async function detectAnomalies(petId) {
   await _delay(100);
   const stats = await getDailyIntake(petId, 7);

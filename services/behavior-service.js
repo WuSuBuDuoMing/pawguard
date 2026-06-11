@@ -43,6 +43,11 @@ function _initData() {
   }
 }
 
+/**
+ * 获取行为记录
+ * @param {string} [petId] - 可选宠物 ID 筛选
+ * @returns {Promise<Array>} 按日期降序的行为记录
+ */
 async function getBehaviors(petId) {
   await _delay(100);
   _initData();
@@ -51,6 +56,11 @@ async function getBehaviors(petId) {
   return all.filter(b => b.petId === petId).sort((a, b) => b.date.localeCompare(a.date));
 }
 
+/**
+ * 添加行为记录
+ * @param {Object} record - 行为数据
+ * @returns {Promise<Object>}
+ */
 async function addBehavior(record) {
   await _delay(150);
   const all = storage.get(BEHAVIOR_STORAGE_KEY) || [];
@@ -60,12 +70,23 @@ async function addBehavior(record) {
   return newRecord;
 }
 
+/**
+ * 获取异常行为记录
+ * @param {string} [petId] - 可选宠物 ID 筛选
+ * @returns {Promise<Array>}
+ */
 async function getAbnormalBehaviors(petId) {
   await _delay(100);
   const behaviors = await getBehaviors(petId);
   return behaviors.filter(b => b.status === 'abnormal');
 }
 
+/**
+ * 获取行为统计
+ * @param {string} [petId] - 可选宠物 ID 筛选
+ * @param {number} [days=7] - 统计天数
+ * @returns {Promise<{total: number, normal: number, abnormal: number, healthScore: number, typeBreakdown: Object}>}
+ */
 async function getBehaviorStats(petId, days = 7) {
   await _delay(100);
   const behaviors = await getBehaviors(petId);
@@ -86,6 +107,10 @@ async function getBehaviorStats(petId, days = 7) {
   };
 }
 
+/**
+ * 获取行为类型定义
+ * @returns {Array<{id: string, name: string, icon: string, normal: string, abnormal: string[]}>}
+ */
 function getBehaviorTypes() { return BEHAVIOR_TYPES; }
 
 module.exports = { getBehaviors, addBehavior, getAbnormalBehaviors, getBehaviorStats, getBehaviorTypes };

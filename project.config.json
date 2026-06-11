@@ -1,5 +1,6 @@
 {
   "description": "AI 宠物管家 - 面向猫狗主人的宠物生活管理小程序",
+  "version": "2.1.0",
   "packOptions": {
     "ignore": [],
     "include": []

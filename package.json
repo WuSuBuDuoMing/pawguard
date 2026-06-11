@@ -1,0 +1,19 @@
+{
+  "name": "pawguard",
+  "version": "2.1.0",
+  "description": "AI 宠物管家 - 面向养宠用户和多宠家庭的智能宠物生活管理微信小程序",
+  "private": true,
+  "scripts": {
+    "test": "jest --verbose"
+  },
+  "keywords": [
+    "wechat-miniprogram",
+    "pet-care",
+    "ai-assistant"
+  ],
+  "author": "WuSuBuDuoMing",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
