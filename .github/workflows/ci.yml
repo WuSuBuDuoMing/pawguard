@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate app.json
+        run: |
+          echo "=== Validating app.json ==="
+          if [ ! -f app.json ]; then
+            echo "ERROR: app.json not found"
+            exit 1
+          fi
+          node -e "
+            const fs = require('fs');
+            const config = JSON.parse(fs.readFileSync('app.json', 'utf8'));
+            if (!config.pages || !Array.isArray(config.pages) || config.pages.length === 0) {
+              console.error('ERROR: app.json must have a non-empty pages array');
+              process.exit(1);
+            }
+            console.log('app.json is valid. Pages:', config.pages.length);
+          "
+
+      - name: Check all pages have 4 required files
+        run: |
+          echo "=== Checking page file completeness ==="
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            const config = JSON.parse(fs.readFileSync('app.json', 'utf8'));
+            const requiredExts = ['.js', '.json', '.wxml', '.wxss'];
+            let errors = [];
+
+            for (const page of config.pages) {
+              const dir = path.dirname(page);
+              const name = path.basename(page);
+              for (const ext of requiredExts) {
+                const file = path.join(dir, name + ext);
+                if (!fs.existsSync(file)) {
+                  errors.push('MISSING: ' + file);
+                }
+              }
+            }
+
+            if (errors.length > 0) {
+              console.error('Page validation failed:');
+              errors.forEach(e => console.error('  ' + e));
+              process.exit(1);
+            } else {
+              console.log('All ' + config.pages.length + ' pages have all 4 required files (.js, .json, .wxml, .wxss)');
+            }
+          "
