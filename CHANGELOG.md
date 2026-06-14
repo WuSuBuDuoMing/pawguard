@@ -2,6 +2,11 @@
 
 All notable changes to PawGuard (AI 宠物管家) will be documented in this file.
 
+## [2.4.0] - 2026-06-14
+
+### Changed
+- Security policy, documentation enhancements, open-source best practices
+
 ## [2.2.0] - 2026-06-14
 
 ### Changed
