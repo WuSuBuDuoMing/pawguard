@@ -2,6 +2,11 @@
 
 All notable changes to PawGuard (AI 宠物管家) will be documented in this file.
 
+## [2.6.0] - 2026-06-16
+
+### Changed
+- Added CODE_OF_CONDUCT.md, FUNDING.yml, CODEOWNERS, enhanced Issue/PR templates
+
 ## [2.4.0] - 2026-06-14
 
 ### Changed
