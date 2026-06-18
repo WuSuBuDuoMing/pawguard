@@ -1,4 +1,28 @@
+# Dependencies
 node_modules/
 miniprogram_npm/
+
+# WeChat DevTools
+project.private.config.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs
 *.log
+npm-debug.log*
+
+# Coverage
+coverage/
+
+# Build output
+dist/

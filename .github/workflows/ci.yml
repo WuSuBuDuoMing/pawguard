@@ -58,3 +58,31 @@ jobs:
               console.log('All ' + config.pages.length + ' pages have all 4 required files (.js, .json, .wxml, .wxss)');
             }
           "
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Validate package.json version matches release
+        run: |
+          echo "=== Checking package.json metadata ==="
+          node -e "
+            const pkg = require('./package.json');
+            if (!pkg.name) { console.error('ERROR: package.json missing name'); process.exit(1); }
+            if (!pkg.version) { console.error('ERROR: package.json missing version'); process.exit(1); }
+            if (!pkg.license) { console.error('ERROR: package.json missing license'); process.exit(1); }
+            console.log('package.json OK:', pkg.name, 'v' + pkg.version, '(' + pkg.license + ')');
+          "

@@ -1,16 +1,66 @@
 # Changelog
 
-All notable changes to PawGuard (AI 宠物管家) will be documented in this file.
+All notable changes to PawGuard (AI Pet Butler) will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [2.9.0] - 2026-06-18
+
+### Added
+- **CONTRIBUTING.md**: Comprehensive contribution guidelines with development setup, coding standards, and commit convention
+- **.gitignore**: Expanded to cover IDE files, OS artifacts, coverage output, and build directories
+- **CI test job**: GitHub Actions workflow now runs `npm test` and validates `package.json` metadata on every push/PR
+
+### Changed
+- **README.md**: Complete overhaul -- English-first with CI badge, MIT badge, full feature table, architecture docs, installation guide, project structure, testing section, and links to community docs
+- **JSDoc improvements**: Enhanced documentation across all 15 service files and `app.js` with proper `@file`, `@module`, `@param`, `@returns`, `@async`, and `@example` annotations
+- **app.js**: Full JSDoc with `@file` header, `@type` annotations on all `globalData` properties, and method-level documentation
+
+### Fixed
+- **Version alignment**: Synchronized version to 2.9.0 across `package.json`, `project.config.json`, `settings-service.js` export, and `app.js`
+
+## [2.8.0] - 2026-06-18
+
+### Added
+- **Behavior tracking service**: `behavior-service.js` with 8 behavior types (eating, drinking, sleeping, playing, grooming, toilet, social, movement)
+- **Behavior stats**: Normal/abnormal ratio tracking and health score calculation
+- **Daily summary service**: `daily-summary-service.js` aggregating tasks, reminders, expenses, and highlights
+
+### Changed
+- Enhanced `data-integrity-service.js` with feeding and water anomaly checks
+- Improved cross-service data aggregation for dashboard
+
+## [2.7.0] - 2026-06-17
+
+### Added
+- **Reptile species support**: AI assistant now handles reptile-specific care questions (temperature, UVB, diet)
+- **Bird species support**: Tailored advice for avian care (environment, diet, toxic foods)
+- **Rabbit and hamster expansion**: More comprehensive species-specific advice in AI assistant
+- **Species-specific quick questions**: Quick question chips adapt based on current pet's species
+
+### Changed
+- Expanded `SPECIES_INFO` in ai-service.js with lifespan, weight range, diet, and notes fields
+- Improved keyword matching priority (urgent > symptom > general > data query)
+- Enhanced mock data with richer diary entries and behavioral observations
 
 ## [2.6.0] - 2026-06-16
 
-### Changed
-- Added CODE_OF_CONDUCT.md, FUNDING.yml, CODEOWNERS, enhanced Issue/PR templates
+### Added
+- CODE_OF_CONDUCT.md (Contributor Covenant v2.1)
+- FUNDING.yml for GitHub sponsor configuration
+- CODEOWNERS for automatic PR review assignment
+- Enhanced Issue templates (bug report, feature request)
+- Pull Request template with checklist
 
 ## [2.4.0] - 2026-06-14
 
+### Added
+- SECURITY.md with vulnerability reporting policy and response time SLA
+
 ### Changed
-- Security policy, documentation enhancements, open-source best practices
+- Documentation enhancements across README and Chinese README
+- Open-source best practices alignment
 
 ## [2.2.0] - 2026-06-14
 

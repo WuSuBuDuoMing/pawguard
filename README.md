@@ -1,102 +1,174 @@
-# 🐾 AI 宠物管家
+# PawGuard - AI Pet Butler
 
-> 面向养宠用户和多宠家庭的智能宠物生活管理微信小程序
+[![CI](https://github.com/WuSuBuDuoMing/pawguard/actions/workflows/ci.yml/badge.svg)](https://github.com/WuSuBuDuoMing/pawguard/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Version](https://img.shields.io/badge/version-2.9.0-green.svg)](./CHANGELOG.md)
+
+> An intelligent pet care management WeChat Mini Program for multi-pet households.
 >
-> 用可爱温暖的方式，系统化管理你家毛孩子的吃喝拉撒、健康训练、开销账本和成长瞬间。
+> Manage feeding, hydration, health, training, expenses, and growth diaries for cats, dogs, rabbits, hamsters, birds, and reptiles -- all in one app.
+
+[English](./README.md) | [中文](./README.zh-CN.md)
 
 ---
 
-## ✨ 功能全景
+## Features
 
-| 模块 | 功能亮点 |
-|------|----------|
-| 🏠 首页仪表盘 | 今日任务、进度环、喂食/饮水摘要、AI 建议、快捷菜单、下拉刷新 |
-| 🐱 宠物档案 | 多宠管理(猫/狗/兔/仓鼠/鸟/爬宠)、体重趋势图、性格标签、物种专属背景 |
-| 📋 日常照护 | 9 种类型、打卡动画、全部完成庆祝、周柱状图 |
-| 🍽️ 喂食管理 | 详细喂食记录、食欲状态、食物类型、统计图表、快捷记录 |
-| 💧 饮水管理 | 换水记录、饮水量追踪、异常检测、快捷记录 |
-| 💊 健康记录 | 时间线视图、添加记录、体重趋势图、紧急提醒、颜色编码筛选 |
-| 🤖 AI 宠物助手 | 智能问答、紧急症状识别、6 物种专属建议、护理知识、快捷提问 |
-| 🎯 训练打卡 | 技能徽章(5级)、连续训练天数、AI 训练建议、添加训练记录表单 |
-| 📦 用品库存 | 库存/购物清单双模式、勾选补货、消耗预警、添加物品表单 |
-| 💰 宠物账本 | 月度预算追踪、分类柱状图、多宠分摊 |
-| 📝 成长日记 | 心情日历、AI 文案生成(复制/保存)、写日记表单、月度总结 |
-| 📷 宠物相册 | 时间分组、标签筛选、照片详情弹窗 |
-| 🔍 全局搜索 | 跨模块搜索(宠物/日记/健康/喂食/库存/开销)、历史记录、热门词 |
-| 🔔 提醒中心 | 健康/照护/喂食/饮水/库存多维提醒、三级分类(紧急/即将/普通) |
-| 🐾 宠物详情 | 一体化视图(健康/喂食/饮水/训练/时间线)、体重折线图 |
-| 📊 数据统计 | 照护趋势、喂食趋势、饮水趋势、开销趋势、库存健康度 |
-| 👤 个人中心 | 成就徽章、数据健康检查、导出数据 |
-| 🎬 首次引导 | 5 步 onboarding |
+| Module | Highlights |
+|--------|-----------|
+| **Dashboard** | Today's tasks, progress ring, feeding/watering summary, AI tips, quick actions, pull-to-refresh |
+| **Pet Profiles** | Multi-pet management (cat/dog/rabbit/hamster/bird/reptile), weight trend chart, personality tags, species-themed backgrounds |
+| **Daily Care** | 9 care types, check-in animations, completion celebration, weekly bar chart |
+| **Feeding Management** | Detailed feeding logs, appetite status, food type tracking, statistics, quick-entry |
+| **Water Tracking** | Water change logs, intake monitoring, anomaly detection, quick-entry |
+| **Health Records** | Timeline view, vaccine/deworming/visit/medication tracking, overdue alerts, color-coded filters |
+| **AI Pet Assistant** | Symptom analysis, urgent symptom detection, 6-species advice, care knowledge base, quick questions |
+| **Training Tracker** | Skill badges (5 levels), streak tracking, AI training suggestions, training log form |
+| **Inventory** | Stock list + shopping list mode, check-to-restock, low-stock alerts, add-item form |
+| **Expense Ledger** | Monthly budget tracking, category breakdown chart, multi-pet cost allocation |
+| **Growth Diary** | Mood calendar, AI-generated copy, diary entry form, monthly summary |
+| **Pet Album** | Time-grouped photos, tag filtering, photo detail modal |
+| **Global Search** | Cross-module search (pets, diary, health, feeding, inventory, expenses), search history, trending terms |
+| **Reminder Center** | Multi-dimensional reminders (health, care, feeding, water, inventory), 3-tier urgency (urgent/soon/normal) |
+| **Pet Detail** | Unified view (health, feeding, water, training, timeline), weight line chart |
+| **Data Statistics** | Care trends, feeding trends, water trends, expense trends, inventory health score |
+| **Profile** | Achievement badges, data health check, data export |
+| **Onboarding** | 5-step first-launch walkthrough |
 
-## 🤖 AI 宠物助手
+## AI Pet Assistant
 
-本地规则版智能问答，支持：
+A local rule-based intelligent Q&A engine supporting:
 
-- 🚨 **紧急症状识别**：带血、呼吸困难、抽搐、长时间不吃不喝等立即提醒就医
-- 🔍 **症状分析**：呕吐、腹泻、皮肤问题、眼睛/耳朵/口腔问题等分类建议
-- 💊 **护理知识**：疫苗、驱虫、洗澡、绝育、体重管理等
-- 🍽️ **喂食建议**：喂食量、频率、食物安全等
-- 📊 **宠物数据查询**：今日任务、体重记录、照护状态
+- **Urgent Symptom Detection**: Blood in stool, breathing difficulty, seizures, prolonged appetite loss -- immediate vet alert
+- **Symptom Analysis**: Vomiting, diarrhea, skin issues, eye/ear/oral problems with categorized advice
+- **Care Knowledge**: Vaccines, deworming, bathing, neutering, weight management
+- **Feeding Guidance**: Portions, frequency, food safety
+- **Data Queries**: Today's tasks, weight records, care status
+- **6 Species Support**: Cat, dog, rabbit, hamster, bird, reptile -- each with tailored advice
 
-⚠️ AI 助手仅提供参考建议，不做医学诊断。严重症状请立即就医。
+> **Disclaimer**: The AI assistant provides reference suggestions only and does not offer medical diagnoses. For serious symptoms, consult a veterinarian immediately.
 
-## 🏗️ 技术架构
+## Architecture
 
 ```text
-Pages(20) → Services(13) → Storage
-    ↓
-Components(14) ← Utils(9)
-    ↓
+Pages(20) -> Services(15) -> Storage(wx.setStorageSync)
+    |
+Components(14) <- Utils(10)
+    |
 Custom TabBar + Canvas Charts
 ```
 
-- 自定义 TabBar（emoji 图标，零图片依赖）
-- Behavior 主题系统（暗黑模式一键切换）
-- Canvas 2D 图表（环形进度 + 折线图）
-- Service 层封装（可替换真实后端）
-- 数据校验 + 完整性检查
-- 本地规则 AI 引擎（预留 API 接口）
+### Key Technical Decisions
 
-## 🚀 快速开始
+- **Custom TabBar**: Emoji-based icons, zero image dependencies
+- **Behavior Theme System**: Dark mode with one-click toggle
+- **Canvas 2D Charts**: Ring progress + line charts without third-party libraries
+- **Service Layer**: Modular data layer, easily swappable to a real backend
+- **Data Validation**: Integrity checks with automatic anomaly detection
+- **Local AI Engine**: Rule-based NLP with API integration stubs for OpenAI/Claude/DeepSeek
 
-1. 微信开发者工具打开项目
-2. 替换 `project.config.json` 中的 `appid`
-3. 编译运行（首次进入引导页）
+## Getting Started
 
-## 📂 文件统计
+### Prerequisites
 
-| 类型 | 数量 |
-|------|------|
-| JS | 60+ |
-| WXML | 35+ |
-| WXSS | 35+ |
-| JSON | 35+ |
-| 文档 | 6 |
-| 合计 | ~175 |
+- [WeChat DevTools](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html) (latest stable)
+- Node.js >= 16.x (for running tests)
 
-## 📊 Mock 数据
+### Installation
 
-| 类型 | 数量 |
-|------|------|
-| 宠物 | 8 只(4猫4狗) |
-| 照护 | ~400 条 |
-| 喂食 | ~300 条 |
-| 饮水 | ~200 条 |
-| 健康 | 43 条 |
-| 训练 | 48 条 |
-| 库存 | 25 种 |
-| 开销 | 48 条 |
-| 日记 | 18 条 |
-| 相册 | 45 条 |
+```bash
+# Clone the repository
+git clone https://github.com/WuSuBuDuoMing/pawguard.git
+cd pawguard
 
-## ⚠️ 安全边界
+# Install dependencies
+npm install
 
-- 健康模块仅做记录和提醒，不提供医疗诊断
-- AI 助手仅提供参考建议，不做医学诊断
-- 严重症状（带血、呼吸困难、抽搐等）必须提醒及时就医
-- 如有健康疑虑请咨询专业兽医
+# Run tests
+npm test
+```
 
-## 📄 License
+### Running in WeChat DevTools
 
-MIT
+1. Open WeChat DevTools
+2. **File > Open Project** and select the `pawguard` directory
+3. Replace `appid` in `project.config.json` with your own WeChat Mini Program AppID
+4. Click **Compile** -- the app will launch with the onboarding flow on first run
+
+## Project Structure
+
+```text
+pawguard/
+├── app.js / app.json / app.wxss   # Entry files
+├── pages/          (20)  # Mini program pages
+├── services/       (15)  # Data layer (mock, swappable to backend)
+├── components/     (14)  # Reusable UI components
+├── utils/          (10)  # Utility functions and constants
+├── custom-tab-bar/        # Custom bottom navigation
+├── assets/                # Static images and icons
+├── styles/                # Global stylesheets
+├── tests/                 # Jest unit tests
+├── docs/                  # Technical documentation
+├── scripts/               # Build scripts
+├── .github/               # CI, issue/PR templates, funding
+├── CONTRIBUTING.md        # Contribution guidelines
+├── CODE_OF_CONDUCT.md     # Community code of conduct
+├── SECURITY.md            # Vulnerability reporting policy
+└── LICENSE                # MIT License
+```
+
+## Testing
+
+```bash
+npm test
+```
+
+Tests cover core utility modules:
+
+| Module | Coverage |
+|--------|----------|
+| `date-utils` | Date formatting, relative time, days-until calculations |
+| `validators` | Input validation for pet data, expenses, and user input |
+| `health-utils` | Health record categorization, overdue detection |
+| `pet-utils` | Species detection, age calculation, breed lookup |
+| `money-utils` | Currency formatting, budget calculations |
+| `storage-utils` | Local storage read/write with error handling |
+
+## Contributing
+
+We welcome contributions of all kinds. Please read our [Contributing Guide](./CONTRIBUTING.md) before submitting a Pull Request.
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Make your changes and add tests
+4. Run `npm test` to ensure everything passes
+5. Submit a Pull Request
+
+For bug reports and feature requests, please use the [issue templates](https://github.com/WuSuBuDuoMing/pawguard/issues/new/choose).
+
+## Security
+
+For security vulnerability reports, please see [SECURITY.md](./SECURITY.md). Do **not** open public issues for security concerns.
+
+## Mock Data
+
+The app ships with comprehensive mock data for demonstration:
+
+| Type | Count |
+|------|-------|
+| Pets | 8 (4 cats, 4 dogs) |
+| Care records | ~400 |
+| Feeding records | ~300 |
+| Water records | ~200 |
+| Health records | 43 |
+| Training records | 48 |
+| Inventory items | 25 |
+| Expense records | 48 |
+| Diary entries | 18 |
+| Photos | 45 |
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
+
+Copyright (c) 2026 WuSuBuDuoMing
