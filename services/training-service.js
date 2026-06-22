@@ -207,4 +207,136 @@ async function getTrainingSuggestion(petId) {
   return suggestions.length > 0 ? suggestions[0] : '训练进展顺利，继续保持每天练习的好习惯！';
 }
 
-module.exports = { getTrainingRecords, addTrainingRecord, getCommandProgress, getWeeklyReport, getTrainingStreak, getTrainingSuggestion };
+/**
+ * 获取综合训练统计报告
+ * 汇总训练数据，生成全面的训练分析报告
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<{totalSessions: number, totalHours: number, overallSuccessRate: number, strongestCommand: string, weakestCommand: string, commandStats: Array, trainingDays: number, lastTrainingDate: string|null}>}
+ */
+async function getTrainingStatsReport(petId) {
+  await _delay(150);
+  const records = await getTrainingRecords(petId);
+
+  if (records.length === 0) {
+    return {
+      totalSessions: 0,
+      totalHours: 0,
+      overallSuccessRate: 0,
+      strongestCommand: null,
+      weakestCommand: null,
+      commandStats: [],
+      trainingDays: 0,
+      lastTrainingDate: null,
+    };
+  }
+
+  const totalSessions = records.length;
+  const totalMinutes = records.reduce((s, r) => s + (r.duration || 0), 0);
+  const totalHours = parseFloat((totalMinutes / 60).toFixed(1));
+  const successCount = records.filter(r => r.success).length;
+  const overallSuccessRate = Math.round((successCount / totalSessions) * 100);
+
+  const trainingDays = [...new Set(records.map(r => r.date))].length;
+  const lastTrainingDate = records[0]?.date || null;
+
+  // 各科目统计
+  const commandStats = {};
+  records.forEach(r => {
+    if (!commandStats[r.command]) {
+      commandStats[r.command] = { command: r.command, total: 0, success: 0, totalDuration: 0 };
+    }
+    commandStats[r.command].total++;
+    if (r.success) commandStats[r.command].success++;
+    commandStats[r.command].totalDuration += r.duration || 0;
+  });
+
+  const statsArray = Object.values(commandStats).map(s => ({
+    ...s,
+    successRate: s.total > 0 ? Math.round((s.success / s.total) * 100) : 0,
+    avgDuration: s.total > 0 ? Math.round(s.totalDuration / s.total) : 0,
+  })).sort((a, b) => b.successRate - a.successRate);
+
+  const strongestCommand = statsArray.length > 0 ? statsArray[0].command : null;
+  const weakestCommand = statsArray.length > 1 ? statsArray[statsArray.length - 1].command : null;
+
+  return {
+    totalSessions,
+    totalHours,
+    overallSuccessRate,
+    strongestCommand,
+    weakestCommand,
+    commandStats: statsArray,
+    trainingDays,
+    lastTrainingDate,
+  };
+}
+
+/**
+ * 获取训练里程碑和成就列表
+ * 基于训练数据判断各种成就解锁状态
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Array<{id: string, name: string, description: string, unlocked: boolean, unlockedDate: string|null, icon: string}>>}
+ */
+async function getTrainingMilestones(petId) {
+  await _delay(100);
+  const records = await getTrainingRecords(petId);
+  const progress = await getCommandProgress(petId);
+  const streak = await getTrainingStreak(petId);
+  const stats = await getTrainingStatsReport(petId);
+
+  const milestones = [
+    {
+      id: 'first_training', name: '初次训练', description: '完成第一次训练记录',
+      icon: '🌟', unlocked: records.length >= 1,
+      unlockedDate: records.length >= 1 ? records[records.length - 1]?.date : null,
+    },
+    {
+      id: 'ten_sessions', name: '十次训练', description: '累计完成 10 次训练',
+      icon: '💪', unlocked: records.length >= 10,
+      unlockedDate: records.length >= 10 ? records.find((r, i) => i >= records.length - 10)?.date : null,
+    },
+    {
+      id: 'fifty_sessions', name: '训练达人', description: '累计完成 50 次训练',
+      icon: '🏅', unlocked: records.length >= 50,
+      unlockedDate: null,
+    },
+    {
+      id: 'first_badge', name: '初次获得徽章', description: '至少一个科目获得初学者徽章',
+      icon: '🥉', unlocked: Object.values(progress).some(p => p.badge),
+      unlockedDate: Object.values(progress).find(p => p.badge)?.lastDate || null,
+    },
+    {
+      id: 'five_day_streak', name: '坚持五天', description: '连续训练 5 天',
+      icon: '🔥', unlocked: streak.streak >= 5 || streak.bestStreak >= 5,
+      unlockedDate: null,
+    },
+    {
+      id: 'thirty_day_streak', name: '月度坚持', description: '连续训练 30 天',
+      icon: '⭐', unlocked: streak.streak >= 30 || streak.bestStreak >= 30,
+      unlockedDate: null,
+    },
+    {
+      id: 'high_success_rate', name: '高成功率', description: '总训练成功率达到 80% 以上',
+      icon: '🎯', unlocked: stats.overallSuccessRate >= 80,
+      unlockedDate: null,
+    },
+    {
+      id: 'all_commands', name: '全能训练师', description: '所有科目都有训练记录',
+      icon: '🏆', unlocked: stats.commandStats.length >= 5,
+      unlockedDate: null,
+    },
+    {
+      id: 'total_hours_5', name: '五小时训练', description: '累计训练时间超过 5 小时',
+      icon: '⏰', unlocked: stats.totalHours >= 5,
+      unlockedDate: null,
+    },
+  ];
+
+  return milestones;
+}
+
+module.exports = {
+  getTrainingRecords, addTrainingRecord, getCommandProgress,
+  getWeeklyReport, getTrainingStreak, getTrainingSuggestion,
+  getTrainingStatsReport, getTrainingMilestones,
+};

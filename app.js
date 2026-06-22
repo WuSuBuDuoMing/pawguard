@@ -8,7 +8,7 @@
  * - 用户数据和宠物选择状态的持久化
  *
  * @module app
- * @version 2.9.0
+ * @version 2.12.0
  */
 
 const storageUtils = require('./utils/storage-utils');

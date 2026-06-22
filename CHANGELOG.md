@@ -20,6 +20,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Version alignment**: Synchronized version to 2.9.0 across `package.json`, `project.config.json`, `settings-service.js` export, and `app.js`
 
+## [2.10.0] - 2026-06-20
+
+### Added
+- **Weight trend analysis** (`health-service.js`): New `getWeightTrend()` function analyzes pet weight change direction, monthly rate, and provides intelligent suggestions based on species
+- **Vaccine smart reminders** (`health-service.js`): New `getVaccineSmartReminders()` generates priority-based (urgent/warning/attention/normal) vaccine reminder list with human-readable messages
+- **Weight trend utilities** (`health-utils.js`): New `analyzeWeightTrend()` calculates direction, delta, and monthly rate from weight history; `checkWeightInRange()` validates weight against species normal ranges
+
+### Changed
+- Enhanced health service exports to include new weight and vaccine analysis functions
+- Improved JSDoc documentation for `health-utils.js` with detailed `@returns` type descriptions
+
+## [2.11.0] - 2026-06-21
+
+### Added
+- **Smart feeding plan** (`feeding-service.js`): New `getSmartFeedingPlan()` recommends daily grams, meal count, food type, and appetite score based on 7-day historical data with actionable tips
+- **Feeding regularity scoring** (`feeding-service.js`): New `getFeedingRegularity()` evaluates time consistency of feeding habits, tracks missed meals, and provides regularity grade (excellent/good/fair/poor)
+- **Training statistics report** (`training-service.js`): New `getTrainingStatsReport()` provides comprehensive analysis including total sessions/hours, overall success rate, strongest/weakest commands, and per-command breakdown
+- **Training milestones** (`training-service.js`): New `getTrainingMilestones()` tracks 9 unlockable achievements (first training, streaks, badges, hours, success rate) with unlock status and dates
+
+### Changed
+- Expanded feeding service exports with intelligent plan and regularity scoring functions
+- Expanded training service exports with stats report and milestone tracking functions
+
+## [2.12.0] - 2026-06-22
+
+### Added
+- **Version bump to 2.12.0**: Synchronized across `project.config.json`, `package.json`, `app.js`, `settings-service.js`, and `README.md` badge
+
+### Changed
+- **JSDoc enhancements**: Added `@type` and `@default` annotations to `MAX_PETS` and `CACHE_EXPIRY` constants in `constants.js`
+- **CHANGELOG.md**: Added comprehensive changelog entries for v2.10.0, v2.11.0, and v2.12.0 documenting all new features across health, feeding, and training modules
+
 ## [2.8.0] - 2026-06-18
 
 ### Added

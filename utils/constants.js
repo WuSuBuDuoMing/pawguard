@@ -211,10 +211,16 @@ const STORAGE_KEYS = {
   WATER_RECORDS: 'waterRecords',
 };
 
-/** 最大宠物数量限制 */
+/** 最大宠物数量限制
+ *  @type {number}
+ *  @default 10
+ */
 const MAX_PETS = 10;
 
-/** 默认缓存过期时间：24小时（毫秒） */
+/** 默认缓存过期时间：24小时（毫秒）
+ *  @type {number}
+ *  @default 86400000
+ */
 const CACHE_EXPIRY = 24 * 60 * 60 * 1000;
 
 module.exports = {

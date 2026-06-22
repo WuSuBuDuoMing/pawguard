@@ -220,6 +220,84 @@ function formatHealthType(type) {
   return typeMap[type] || '其他';
 }
 
+/**
+ * 计算体重趋势方向和幅度
+ * 基于最近的体重记录数组，分析体重变化方向和速率
+ * @param {Array<{weight: number, date: string}>} weightRecords - 体重记录数组（需按日期升序排列）
+ * @returns {{direction: string, delta: number, monthlyRate: number, summary: string}}
+ *   direction - 'up'(增重), 'down'(减重), 'flat'(稳定)
+ *   delta - 总变化量 (kg)
+ *   monthlyRate - 月均变化速率 (kg/月)
+ *   summary - 趋势描述文本
+ */
+function analyzeWeightTrend(weightRecords) {
+  if (!Array.isArray(weightRecords) || weightRecords.length < 2) {
+    return { direction: 'flat', delta: 0, monthlyRate: 0, summary: '数据不足，需要至少两条体重记录' };
+  }
+
+  const sorted = [...weightRecords].sort((a, b) => a.date.localeCompare(b.date));
+  const first = sorted[0];
+  const last = sorted[sorted.length - 1];
+  const delta = parseFloat((last.weight - first.weight).toFixed(2));
+
+  const daysDiff = Math.max(1, Math.round((parseDate(last.date) - parseDate(first.date)) / (24 * 60 * 60 * 1000)));
+  const monthlyRate = parseFloat((delta / Math.max(1, daysDiff / 30)).toFixed(2));
+
+  let direction = 'flat';
+  if (delta > 0.2) direction = 'up';
+  else if (delta < -0.2) direction = 'down';
+
+  const absDelta = Math.abs(delta);
+  let summary = '';
+  switch (direction) {
+    case 'up':
+      summary = `体重增加 ${absDelta}kg，月均增加 ${Math.abs(monthlyRate)}kg`;
+      break;
+    case 'down':
+      summary = `体重减少 ${absDelta}kg，月均减少 ${Math.abs(monthlyRate)}kg`;
+      break;
+    default:
+      summary = `体重基本稳定，变化仅 ${absDelta}kg`;
+  }
+
+  return { direction, delta, monthlyRate, summary };
+}
+
+/**
+ * 根据物种的正常体重范围判断是否异常
+ * @param {number} weight - 当前体重 (kg)
+ * @param {string} species - 物种标识 ('cat' | 'dog')
+ * @param {string} [breed=''] - 品种，用于更精确判断
+ * @returns {{isNormal: boolean, status: string, normalRange: {min: number, max: number}, message: string}}
+ */
+function checkWeightInRange(weight, species, breed = '') {
+  const ranges = {
+    cat: { min: 2.5, max: 7.0, label: '猫' },
+    dog: { min: 3.0, max: 35.0, label: '狗' },
+    rabbit: { min: 1.0, max: 5.0, label: '兔子' },
+    hamster: { min: 0.02, max: 0.15, label: '仓鼠' },
+    bird: { min: 0.01, max: 3.0, label: '鸟类' },
+    reptile: { min: 0.01, max: 30.0, label: '爬宠' },
+  };
+
+  const range = ranges[species] || ranges.cat;
+  const isNormal = weight >= range.min && weight <= range.max;
+  let status = '正常';
+  let message = '';
+
+  if (weight < range.min) {
+    status = '偏轻';
+    message = `${range.label}体重 ${weight}kg 低于正常范围，建议增加营养`;
+  } else if (weight > range.max) {
+    status = '偏重';
+    message = `${range.label}体重 ${weight}kg 超过正常范围，建议控制饮食`;
+  } else {
+    message = `${range.label}体重 ${weight}kg 在正常范围内`;
+  }
+
+  return { isNormal, status, normalRange: { min: range.min, max: range.max }, message };
+}
+
 module.exports = {
   isVaccineDue,
   isDewormingDue,
@@ -228,4 +306,6 @@ module.exports = {
   getHealthSummary,
   daysUntilVaccine,
   formatHealthType,
+  analyzeWeightTrend,
+  checkWeightInRange,
 };

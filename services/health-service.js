@@ -146,4 +146,102 @@ async function deleteHealthRecord(id) {
   return filtered.length < all.length;
 }
 
-module.exports = { getHealthRecords, addHealthRecord, deleteHealthRecord, getHealthSummary, getUpcomingReminders };
+/**
+ * 获取体重趋势分析
+ * 分析宠物体重变化趋势，包括增减幅度、变化速率和趋势判定
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<{trend: string, changeRate: number, records: Array, latestWeight: number|null, suggestion: string}>}
+ *   trend - 'gaining'(增重), 'losing'(减重), 'stable'(稳定), 'unknown'(数据不足)
+ *   changeRate - 月均变化速率（kg/月）
+ *   records - 体重记录数组
+ *   latestWeight - 最新体重 (kg)
+ *   suggestion - 智能建议
+ */
+async function getWeightTrend(petId) {
+  await _delay(100);
+  const petService = require('./pet-service');
+  const records = await petService.getWeightHistory(petId);
+
+  if (!records || records.length < 2) {
+    return { trend: 'unknown', changeRate: 0, records: records || [], latestWeight: records?.[0]?.weight || null, suggestion: '需要至少两条体重记录才能分析趋势' };
+  }
+
+  const sorted = [...records].sort((a, b) => a.date.localeCompare(b.date));
+  const first = sorted[0];
+  const last = sorted[sorted.length - 1];
+  const totalChange = last.weight - first.weight;
+
+  const firstDate = new Date(first.date);
+  const lastDate = new Date(last.date);
+  const monthsDiff = Math.max(1, (lastDate - firstDate) / (30 * 24 * 60 * 60 * 1000));
+  const changeRate = parseFloat((totalChange / monthsDiff).toFixed(2));
+
+  let trend = 'stable';
+  if (totalChange > 0.3) trend = 'gaining';
+  else if (totalChange < -0.3) trend = 'losing';
+
+  let suggestion = '';
+  if (trend === 'gaining') {
+    suggestion = changeRate > 0.5
+      ? `月增 ${changeRate}kg，增重偏快，建议减少喂食量并增加运动`
+      : `月增 ${changeRate}kg，增重在正常范围内，请保持当前饮食运动习惯`;
+  } else if (trend === 'losing') {
+    suggestion = Math.abs(changeRate) > 0.5
+      ? `月减 ${Math.abs(changeRate)}kg，减重偏快，如有异常请尽快就医`
+      : `月减 ${Math.abs(changeRate)}kg，轻微减重，请关注食欲和精神状态`;
+  } else {
+    suggestion = '体重稳定，继续保持当前的生活习惯';
+  }
+
+  return { trend, changeRate, records: sorted, latestWeight: last.weight, suggestion };
+}
+
+/**
+ * 获取疫苗智能提醒列表
+ * 综合分析所有疫苗记录，生成分优先级的提醒列表
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<Array<{vaccine: string, nextDate: string, daysLeft: number, priority: string, message: string}>>}
+ *   priority - 'urgent'(已过期/今天), 'warning'(7天内), 'attention'(30天内), 'normal'(正常)
+ */
+async function getVaccineSmartReminders(petId) {
+  await _delay(100);
+  const records = await getHealthRecords(petId);
+  const vaccineRecords = records.filter(r => r.type === 'vaccine');
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+
+  return vaccineRecords
+    .filter(r => r.nextDate)
+    .map(r => {
+      const nextDate = new Date(r.nextDate);
+      const diffMs = nextDate.getTime() - today.getTime();
+      const daysLeft = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
+
+      let priority = 'normal';
+      let message = '';
+      if (daysLeft < 0) {
+        priority = 'urgent';
+        message = `${r.title} 已过期 ${Math.abs(daysLeft)} 天，请尽快补种！`;
+      } else if (daysLeft === 0) {
+        priority = 'urgent';
+        message = `${r.title} 今天到期，请尽快接种！`;
+      } else if (daysLeft <= 7) {
+        priority = 'warning';
+        message = `${r.title} 将在 ${daysLeft} 天后到期，请提前预约`;
+      } else if (daysLeft <= 30) {
+        priority = 'attention';
+        message = `${r.title} 还有 ${daysLeft} 天到期，建议提前安排`;
+      } else {
+        priority = 'normal';
+        message = `${r.title} 下次接种: ${r.nextDate}`;
+      }
+
+      return { vaccine: r.title, nextDate: r.nextDate, daysLeft, priority, message };
+    })
+    .sort((a, b) => a.daysLeft - b.daysLeft);
+}
+
+module.exports = {
+  getHealthRecords, addHealthRecord, deleteHealthRecord, getHealthSummary,
+  getUpcomingReminders, getWeightTrend, getVaccineSmartReminders,
+};
