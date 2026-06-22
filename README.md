@@ -95,6 +95,121 @@ npm test
 3. Replace `appid` in `project.config.json` with your own WeChat Mini Program AppID
 4. Click **Compile** -- the app will launch with the onboarding flow on first run
 
+## Development Environment Setup
+
+### macOS
+
+1. Download [WeChat DevTools (macOS)](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)
+2. Open the installer and drag **WeChatDevTools** to the Applications folder
+3. Clone the repository and open the project:
+4. Launch WeChat DevTools, click **Import Project** (+ button), and select the cloned folder
+5. Enter your Mini Program **AppID** in `project.config.json` (or use the test AppID for preview)
+6. Click **Compile** -- the app launches with the onboarding flow on first run
+
+```bash
+git clone https://github.com/WuSuBuDuoMing/pawguard.git
+cd pawguard
+npm install
+```
+
+### Windows
+
+1. Download [WeChat DevTools (Windows)](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)
+2. Run the installer and follow the setup wizard
+3. Clone the repository and open the project:
+4. Launch WeChat DevTools, click **Import Project** (+ button), and select the cloned folder
+5. Enter your Mini Program **AppID** in `project.config.json` (or use the test AppID for preview)
+6. Click **Compile** -- the app launches with the onboarding flow on first run
+
+```powershell
+git clone https://github.com/WuSuBuDuoMing/pawguard.git
+cd pawguard
+npm install
+```
+
+### Linux
+
+WeChat DevTools is not available on Linux. Use [miniprogram-ci](https://www.npmjs.com/package/miniprogram-ci) for CI/CD workflows:
+
+```bash
+# 1. Install miniprogram-ci
+npm install -g miniprogram-ci
+
+# 2. Clone the repository
+git clone https://github.com/WuSuBuDuoMing/pawguard.git
+cd pawguard
+
+# 3. Generate a CI private key from the WeChat Official Account backend
+#    (MP Backend > Development > Development Settings > Upload Key)
+#    Save it as ci-private.key in the project root
+
+# 4. Preview the mini program on a real device
+miniprogram-ci preview \
+  --appid YOUR_APPID \
+  --pk-version 1 \
+  --pk-branch main \
+  --private-key-path ci-private.key \
+  --desc "Preview from CLI"
+
+# 5. Upload a new version (for review / release)
+miniprogram-ci upload \
+  --appid YOUR_APPID \
+  --pk-version 1 \
+  --pk-branch main \
+  --private-key-path ci-private.key \
+  --desc "Version uploaded via miniprogram-ci"
+```
+
+> **Note:** `miniprogram-ci` supports preview (generates QR code for scanning) and upload (submit for review), but does not provide a simulator. For full debugging, use the WeChat DevTools on macOS or Windows.
+
+### Docker
+
+Use the [miniprogram-ci Docker image](https://github.com/nicepkg/miniprogram-ci) for containerized CI/CD pipelines:
+
+```dockerfile
+# Dockerfile
+FROM node:20-alpine
+RUN npm install -g miniprogram-ci
+WORKDIR /app
+COPY . .
+CMD ["miniprogram-ci", "preview", \
+     "--appid", "YOUR_APPID", \
+     "--pk-version", "1", \
+     "--private-key-path", "ci-private.key"]
+```
+
+```bash
+# Build and run
+docker build -t pawguard-ci .
+docker run --rm -v $(pwd)/ci-private.key:/app/ci-private.key pawguard-ci
+
+# Or use docker compose
+docker compose up ci
+```
+
+### Step-by-Step Workflow
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/WuSuBuDuoMing/pawguard.git
+cd pawguard
+
+# 2. Install dependencies (if running tests)
+npm install
+
+# 3. Open the project in WeChat DevTools (macOS/Windows)
+#    or configure miniprogram-ci (Linux/Docker)
+
+# 4. Configure your AppID
+#    Edit project.config.json → "appid": "your-app-id-here"
+
+# 5. Compile and preview in the simulator
+
+# 6. Use Preview / 真机调试 for on-device testing
+
+# 7. When ready, Upload to submit for WeChat review
+```
+
 ## Project Structure
 
 ```text
