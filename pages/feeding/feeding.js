@@ -1,5 +1,15 @@
 /**
- * pages/feeding/feeding.js - 喂食管理页面
+ * @file pages/feeding/feeding.js - 喂食管理页面
+ *
+ * 管理宠物喂食记录和饮食分析，包括：
+ * - 今日喂食记录与汇总
+ * - 营养平衡分析（多样性、稳定性、综合评分）
+ * - 一周趋势图表和食物类型分布
+ * - 喂食历史记录
+ * - 快速添加常用食物
+ *
+ * @module pages/feeding
+ * @version 2.15.0
  */
 const petService = require('../../services/pet-service');
 const feedingService = require('../../services/feeding-service');
@@ -17,6 +27,7 @@ Page({
     appetiteOptions: feedingService.APPETITE_STATUS,
     activeTab: 'today', // 'today' | 'history' | 'stats'
     historyRecords: [],
+    nutritionBalance: null,
     chartWidth: 300,
   },
 
@@ -45,10 +56,11 @@ Page({
     const petId = this.data.currentPetId;
     if (!petId) return;
 
-    const [todayFeedings, weekStats, foodDist] = await Promise.all([
+    const [todayFeedings, weekStats, foodDist, nutritionBalance] = await Promise.all([
       feedingService.getTodayFeedings(petId),
       feedingService.getFeedingStats(petId, 7),
       feedingService.getFoodTypeDistribution(petId),
+      feedingService.getNutritionBalance(petId),
     ]);
 
     const totalGrams = todayFeedings.reduce((s, r) => s + (r.grams || 0), 0);
@@ -62,7 +74,7 @@ Page({
     }));
 
     this.setData({
-      todayFeedings, weekStats, foodDistribution: foodDist,
+      todayFeedings, weekStats, foodDistribution: foodDist, nutritionBalance,
       totalTodayGrams: totalGrams, todayMealCount: todayFeedings.length,
       normalPct, historyRecords: todayFeedings, trendData,
     });

@@ -1,6 +1,16 @@
 /**
- * feeding-service.js - 喂食管理服务
- * 记录每只宠物的喂食详情：食物名称、类型、克数、时间、是否吃完、食欲状态
+ * @file feeding-service.js - 喂食管理服务
+ *
+ * 记录每只宠物的喂食详情并提供智能分析，包括：
+ * - 喂食记录 CRUD（食物名称、类型、克数、时间、食欲状态）
+ * - 今日喂食和历史记录查询
+ * - 喂食统计和食物类型分布
+ * - 智能喂食计划推荐（基于 7 天数据）
+ * - 喂食规律性评分
+ * - 饮食营养平衡分析（多样性、稳定性、综合评分）
+ *
+ * @module services/feeding-service
+ * @version 2.15.0
  */
 
 const storage = require('../utils/storage-utils');
@@ -359,9 +369,86 @@ async function getFeedingRegularity(petId, days = 7) {
   return { score, regularity, missedMeals, details: detailMap[regularity] };
 }
 
+/**
+ * 获取饮食营养平衡分析
+ * 分析最近 7 天的食物类型分布、摄入量波动和饮食多样性
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<{diversity: number, stability: number, balance: number, details: string[], warnings: string[]}>}
+ *   diversity - 饮食多样性评分 (0-100)，食物种类越多分数越高
+ *   stability - 摄入稳定性评分 (0-100)，每日摄入越稳定分数越高
+ *   balance - 综合营养平衡评分 (0-100)
+ *   details - 分析详情列表
+ *   warnings - 警告信息列表
+ */
+async function getNutritionBalance(petId) {
+  await _delay(150);
+  _initData();
+  const all = storage.get(STORAGE_KEYS.FEEDING_RECORDS || 'feedingRecords') || [];
+  const today = new Date();
+  const weekAgo = new Date(today);
+  weekAgo.setDate(today.getDate() - 7);
+  const weekStr = weekAgo.toISOString().split('T')[0];
+  const weekRecords = all.filter(r => r.petId === petId && r.date >= weekStr);
+
+  if (weekRecords.length === 0) {
+    return { diversity: 0, stability: 0, balance: 0, details: ['暂无喂食数据，无法分析营养平衡'], warnings: [] };
+  }
+
+  // 1. 多样性评分 (0-100)
+  const uniqueTypes = new Set(weekRecords.map(r => r.foodType));
+  const uniqueNames = new Set(weekRecords.map(r => r.foodName));
+  // 理想情况: 3-5 种食物类型, 5+ 种食物
+  const diversity = Math.min(100, Math.round(
+    (Math.min(uniqueTypes.size, 5) / 5 * 60) + (Math.min(uniqueNames.size, 8) / 8 * 40)
+  ));
+
+  // 2. 稳定性评分 (0-100)
+  const dayGrams = {};
+  weekRecords.forEach(r => {
+    if (!dayGrams[r.date]) dayGrams[r.date] = 0;
+    dayGrams[r.date] += r.grams || 0;
+  });
+  const dayValues = Object.values(dayGrams);
+  const avg = dayValues.length > 0 ? dayValues.reduce((s, v) => s + v, 0) / dayValues.length : 0;
+  const variance = dayValues.length > 0
+    ? dayValues.reduce((s, v) => s + Math.pow(v - avg, 2), 0) / dayValues.length
+    : 0;
+  const cv = avg > 0 ? Math.sqrt(variance) / avg : 1; // 变异系数
+  // 变异系数越小越好, 0-0.1: 优秀, 0.1-0.2: 良好, 0.2-0.3: 一般, >0.3: 较差
+  const stability = Math.max(0, Math.round(100 - cv * 200));
+
+  // 3. 综合评分
+  const balance = Math.round(diversity * 0.4 + stability * 0.6);
+
+  // 4. 详情
+  const details = [];
+  details.push(`本周共喂食 ${weekRecords.length} 次，涉及 ${uniqueTypes.size} 种食物类型`);
+  if (avg > 0) details.push(`日均摄入约 ${Math.round(avg)}g`);
+  const daysRecorded = Object.keys(dayGrams).length;
+  details.push(`记录天数: ${daysRecorded}/7 天`);
+
+  // 5. 警告
+  const warnings = [];
+  if (uniqueTypes.size <= 1) {
+    warnings.push('食物类型过于单一，建议增加食物种类以保证营养均衡');
+  }
+  if (cv > 0.3) {
+    warnings.push('每日摄入量波动较大，建议保持规律的喂食量');
+  }
+  if (daysRecorded < 5) {
+    warnings.push('记录天数不足，建议坚持每天记录以获得更准确的分析');
+  }
+  const unfinishedPct = weekRecords.filter(r => !r.finished).length / weekRecords.length;
+  if (unfinishedPct > 0.2) {
+    warnings.push('剩饭比例超过 20%，建议调整每餐份量或更换食物');
+  }
+
+  return { diversity, stability, balance, details, warnings };
+}
+
 module.exports = {
   FOOD_TYPES, APPETITE_STATUS,
   getFeedingRecords, getTodayFeedings, addFeedingRecord, deleteFeedingRecord,
   getFeedingStats, getFoodTypeDistribution,
-  getSmartFeedingPlan, getFeedingRegularity,
+  getSmartFeedingPlan, getFeedingRegularity, getNutritionBalance,
 };

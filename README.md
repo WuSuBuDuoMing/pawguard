@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/WuSuBuDuoMing/pawguard/actions/workflows/ci.yml/badge.svg)](https://github.com/WuSuBuDuoMing/pawguard/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-2.12.0-green.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.15.0-green.svg)](./CHANGELOG.md)
 
 > An intelligent pet care management WeChat Mini Program for multi-pet households.
 >

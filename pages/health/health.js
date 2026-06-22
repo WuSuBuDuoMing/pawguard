@@ -1,12 +1,28 @@
+/**
+ * @file pages/health/health.js - 健康记录页面
+ *
+ * 展示宠物的健康记录概览，包括：
+ * - 健康评分（疫苗、驱虫、就诊、异常、用药多维度评估）
+ * - 疫苗/驱虫/就诊/异常统计卡片
+ * - 体重趋势图表
+ * - 紧急提醒列表
+ * - 快速体重记录
+ *
+ * @module pages/health
+ * @version 2.15.0
+ */
 const petService = require('../../services/pet-service');
 const healthService = require('../../services/health-service');
 const themeBehavior = require('../../utils/theme-behavior');
 const { getDaysUntil } = require('../../utils/date-utils');
 
+/** 健康记录类型对应颜色 */
 const TYPE_COLORS = {
   vaccine: '#7EC8E3', deworming: '#52C41A',
   visit: '#FF9F5A', medication: '#FFB5C2', abnormal: '#FF4D4F'
 };
+
+/** 健康记录类型对应中文标签 */
 const TYPE_LABELS = {
   vaccine: '疫苗', deworming: '驱虫', visit: '就诊', medication: '用药', abnormal: '异常观察'
 };
@@ -18,6 +34,7 @@ Page({
     allRecords: [], filteredRecords: [], activeFilter: '', summaryItems: [],
     urgentReminders: [], typeColors: TYPE_COLORS, typeLabels: TYPE_LABELS,
     weightHistory: [], currentWeight: 0, weightTrend: '', chartWidth: 300,
+    healthScore: null,
     loading: true,
   },
   onLoad() {
@@ -39,10 +56,11 @@ Page({
   async loadData() {
     this.setData({ loading: true });
     try {
-      const [records, summary, weightHistory] = await Promise.all([
+      const [records, summary, weightHistory, healthScore] = await Promise.all([
         healthService.getHealthRecords(this.data.currentPetId),
         healthService.getHealthSummary(this.data.currentPetId),
         petService.getWeightHistory(this.data.currentPetId),
+        healthService.getHealthScore(this.data.currentPetId),
       ]);
     // 处理记录状态
     const processedRecords = records.map(r => ({
@@ -72,7 +90,7 @@ Page({
 
     this.setData({
       allRecords: processedRecords, filteredRecords: processedRecords, summaryItems, urgentReminders,
-      weightHistory: weightChartData, currentWeight, weightTrend, loading: false,
+      weightHistory: weightChartData, currentWeight, weightTrend, healthScore, loading: false,
     });
     } catch(e) {
       console.error('loadData error:', e);

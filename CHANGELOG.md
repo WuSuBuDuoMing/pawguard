@@ -52,6 +52,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **JSDoc enhancements**: Added `@type` and `@default` annotations to `MAX_PETS` and `CACHE_EXPIRY` constants in `constants.js`
 - **CHANGELOG.md**: Added comprehensive changelog entries for v2.10.0, v2.11.0, and v2.12.0 documenting all new features across health, feeding, and training modules
 
+## [2.15.0] - 2026-06-23
+
+### Added
+
+- **Comprehensive health score** (`health-service.js`): New `getHealthScore()` function calculates a multi-dimensional health rating (0-100) across vaccine status, deworming status, visit recency, abnormal records, and medication tracking, with level classification and actionable suggestions
+- **Nutritional balance analysis** (`feeding-service.js`): New `getNutritionBalance()` evaluates diet diversity, intake stability, and overall nutritional balance with detailed insights and warnings
+
+### Changed
+
+- **Health page enhanced**: Displays health score overview with factor breakdown (integrated into `health.js` loadData flow)
+- **Feeding page enhanced**: Displays nutrition balance analytics alongside existing feeding statistics
+- **JSDoc improvements**: Expanded `@file` headers across health and feeding services and pages with detailed module descriptions and feature listings
+
+### Fixed
+
+- **Version alignment**: Synchronized version to 2.15.0 across `project.config.json`, `package.json`, `app.js`, `settings-service.js`, and `README.md` badge
+
+## [2.14.0] - 2026-06-23
+
+### Added
+
+- **JSDoc page documentation**: Added comprehensive `@file` headers with `@module` and `@version` annotations to all page-level JavaScript files
+- **Module descriptions**: Enhanced service and utility file documentation with feature summary blocks in JSDoc headers
+
+### Changed
+
+- **Code documentation standards**: All page files now follow consistent JSDoc pattern with purpose, features list, module identifier, and version tag
+- **Inline comment improvements**: Added descriptive comments for constants (TYPE_COLORS, TYPE_LABELS) in health page
+
+## [2.13.0] - 2026-06-23
+
+### Added
+
+- **Weight trend visualization**: Enhanced weight tracking on health page with chart data transformation and trend indicators
+- **Feeding trend charts**: Weekly feeding statistics now rendered as trend chart data on the feeding page
+
+### Changed
+
+- **Health page data flow**: Refactored `loadData()` to use parallel Promise.all pattern for concurrent data fetching (records, summary, weight history)
+- **Feeding page performance**: Optimized `loadData()` with parallel fetching of today's feedings, weekly stats, and food distribution
+- **Error handling**: Added try/catch with loading state management in health page loadData
+
 ## [2.8.0] - 2026-06-18
 
 ### Added

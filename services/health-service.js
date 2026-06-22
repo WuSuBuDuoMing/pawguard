@@ -1,6 +1,15 @@
 /**
- * health-service.js - 健康记录服务
- * 管理疫苗、驱虫、就诊、用药记录和异常观察
+ * @file health-service.js - 健康记录服务
+ *
+ * 管理疫苗、驱虫、就诊、用药记录和异常观察，提供：
+ * - CRUD 操作（添加、查询、删除健康记录）
+ * - 健康汇总统计（各类型计数）
+ * - 即将到期提醒和疫苗智能提醒
+ * - 体重趋势分析（方向、速率、建议）
+ * - 综合健康评分（五维度 0-100 评分）
+ *
+ * @module services/health-service
+ * @version 2.15.0
  */
 
 const storage = require('../utils/storage-utils');
@@ -241,7 +250,111 @@ async function getVaccineSmartReminders(petId) {
     .sort((a, b) => a.daysLeft - b.daysLeft);
 }
 
+/**
+ * 计算宠物综合健康评分
+ * 综合疫苗、驱虫、就诊、异常、用药等多维度数据，生成 0-100 的健康评分
+ * @param {string} petId - 宠物 ID
+ * @returns {Promise<{score: number, level: string, factors: Array<{name: string, score: number, maxScore: number}>, suggestion: string}>}
+ *   score - 综合健康评分 (0-100)
+ *   level - 'excellent'(优秀), 'good'(良好), 'attention'(需关注), 'risk'(有风险)
+ *   factors - 各维度评分明细
+ *   suggestion - 综合建议
+ */
+async function getHealthScore(petId) {
+  await _delay(150);
+  const records = await getHealthRecords(petId);
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const oneYearAgo = new Date(today);
+  oneYearAgo.setFullYear(today.getFullYear() - 1);
+  const oneYearAgoStr = oneYearAgo.toISOString().split('T')[0];
+
+  const factors = [];
+
+  // 1. 疫苗状态 (0-25)
+  const vaccines = records.filter(r => r.type === 'vaccine');
+  let vaccineScore = 0;
+  if (vaccines.length > 0) {
+    const latestVaccine = vaccines[0]; // 已按日期降序排列
+    if (latestVaccine.nextDate && latestVaccine.nextDate > todayStr) {
+      vaccineScore = 25;
+    } else if (latestVaccine.nextDate && latestVaccine.nextDate >= oneYearAgoStr) {
+      vaccineScore = 15;
+    } else {
+      vaccineScore = 0;
+    }
+  }
+  factors.push({ name: '疫苗状态', score: vaccineScore, maxScore: 25 });
+
+  // 2. 驱虫状态 (0-25)
+  const dewormings = records.filter(r => r.type === 'deworming');
+  let dewormingScore = 0;
+  if (dewormings.length > 0) {
+    const latestDeworming = dewormings[0];
+    if (latestDeworming.nextDate && latestDeworming.nextDate > todayStr) {
+      dewormingScore = 25;
+    } else if (latestDeworming.nextDate && latestDeworming.nextDate >= oneYearAgoStr) {
+      dewormingScore = 15;
+    } else {
+      dewormingScore = 0;
+    }
+  }
+  factors.push({ name: '驱虫状态', score: dewormingScore, maxScore: 25 });
+
+  // 3. 就诊记录 (0-15)
+  const visits = records.filter(r => r.type === 'visit');
+  let visitScore = 0;
+  if (visits.length > 0) {
+    const latestVisit = visits[0];
+    if (latestVisit.date >= oneYearAgoStr) {
+      visitScore = 15;
+    } else if (latestVisit.date >= new Date(oneYearAgo.getTime() - 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]) {
+      visitScore = 8;
+    }
+  }
+  factors.push({ name: '就诊记录', score: visitScore, maxScore: 15 });
+
+  // 4. 异常观察 (-0 to -15, starts at 15)
+  const abnormals = records.filter(r => r.type === 'abnormal');
+  const abnormalPenalty = Math.min(abnormals.length * 5, 15);
+  const abnormalScore = 15 - abnormalPenalty;
+  factors.push({ name: '异常记录', score: Math.max(0, abnormalScore), maxScore: 15 });
+
+  // 5. 用药追踪 (0-10)
+  const medications = records.filter(r => r.type === 'medication');
+  let medicationScore = 0;
+  if (medications.length > 0) {
+    const activeMedications = medications.filter(m => m.nextDate && m.nextDate >= todayStr);
+    if (activeMedications.length > 0 || medications.length > 0) {
+      medicationScore = 10;
+    }
+  } else {
+    // 无用药记录，视为正常（不是所有宠物都需要用药）
+    medicationScore = 10;
+  }
+  factors.push({ name: '用药追踪', score: medicationScore, maxScore: 10 });
+
+  // 计算总分
+  const totalScore = factors.reduce((sum, f) => sum + f.score, 0);
+
+  // 确定等级
+  let level = 'risk';
+  if (totalScore >= 80) level = 'excellent';
+  else if (totalScore >= 60) level = 'good';
+  else if (totalScore >= 40) level = 'attention';
+
+  // 生成建议
+  const levelSuggestions = {
+    excellent: '宠物健康状况优秀，请继续保持定期检查和良好的护理习惯！',
+    good: '宠物整体健康良好，建议关注以下待改善项目以保持最佳状态。',
+    attention: '宠物健康状况需要关注，建议尽快完成过期的疫苗和驱虫。',
+    risk: '宠物健康存在风险，强烈建议尽快带宠物进行全面体检。',
+  };
+
+  return { score: totalScore, level, factors, suggestion: levelSuggestions[level] };
+}
+
 module.exports = {
   getHealthRecords, addHealthRecord, deleteHealthRecord, getHealthSummary,
-  getUpcomingReminders, getWeightTrend, getVaccineSmartReminders,
+  getUpcomingReminders, getWeightTrend, getVaccineSmartReminders, getHealthScore,
 };
